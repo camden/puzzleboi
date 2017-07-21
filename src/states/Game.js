@@ -7,9 +7,6 @@ export default class extends Phaser.State {
   preload() {}
 
   create() {
-    const r = rot;
-    debugger;
-    console.log('ROT!', rot);
     const bannerText = 'Phaser + ES6 + Webpack';
     let banner = this.add.text(
       this.world.centerX,
