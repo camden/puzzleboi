@@ -14,7 +14,6 @@ export default class extends Phaser.State {
       this.game.height - 80,
       bannerText
     );
-    banner.font = 'Bangers';
     banner.padding.set(10, 16);
     banner.fontSize = 40;
     banner.fill = '#77BFA3';
