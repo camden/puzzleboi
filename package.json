@@ -7,7 +7,14 @@
   "scripts": {
     "dev": "webpack",
     "deploy": "webpack --config webpack.production.config.js",
-    "test": "eslint ./src/**/**.js"
+    "test": "eslint ./src/**/**.js",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --single-quote --write --trailing-comma es5",
+      "git add"
+    ]
   },
   "license": "MIT",
   "devDependencies": {
@@ -25,10 +32,14 @@
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
     "expose-loader": "^0.7.3",
+    "husky": "^0.14.3",
+    "lint-staged": "^4.0.2",
+    "prettier": "^1.5.3",
     "webpack": "^2.6.1"
   },
   "dependencies": {
     "phaser-ce": "^2.8.0",
+    "rot-js": "^0.6.2",
     "webfontloader": "^1.6.28"
   }
 }
