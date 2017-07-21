@@ -3326,10 +3326,6 @@ ripemd160@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/ripemd160/-/ripemd160-1.0.1.tgz#93a4bbd4942bc574b69a8fa57c71de10ecca7d6e"
 
-rot-js@^0.6.2:
-  version "0.6.2"
-  resolved "https://registry.yarnpkg.com/rot-js/-/rot-js-0.6.2.tgz#a440e30dccf7e0b7e3f725d235e9de569f36c67b"
-
 run-async@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/run-async/-/run-async-0.1.0.tgz#c8ad4a5e110661e402a7d21b530e009f25f8e389"
