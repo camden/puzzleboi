@@ -1,6 +1,6 @@
 // @flow
 
-export const centerGameObjects = objects => {
+export const centerGameObjects = (objects: Array<{ anchor: { setTo: * } }>) => {
   objects.forEach(function(object) {
     object.anchor.setTo(0.5);
   });
