@@ -1,4 +1,7 @@
+// @flow
 import Phaser from 'phaser';
+
+import { DEV_MODE } from '../utils.js';
 import Mushroom from '../sprites/Mushroom';
 import rot from '../../vendor/rot.min.js';
 
@@ -30,7 +33,7 @@ export default class extends Phaser.State {
   }
 
   render() {
-    if (__DEV__) {
+    if (DEV_MODE) {
       this.game.debug.spriteInfo(this.mushroom, 32, 32);
     }
   }
