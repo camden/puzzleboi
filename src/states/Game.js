@@ -1,9 +1,11 @@
 // @flow
 import Phaser from 'phaser';
 
-import { DEV_MODE } from '../utils.js';
+import { DEV_MODE } from '../utils';
 import Mushroom from '../sprites/Mushroom';
 import rot from '../../vendor/rot.min.js';
+
+import { onKeyDown, onKeyUp } from '../input';
 
 export default class extends Phaser.State {
   init() {}
@@ -37,15 +39,10 @@ export default class extends Phaser.State {
   createInputCallbacks() {
     // pull out "onKeyDown" etc
     // then map to command pattern
-    this.game.input.keyboard.addCallbacks(this, obj => {
-      console.log(obj);
-    });
+    this.game.input.keyboard.addCallbacks(this, onKeyDown, onKeyUp);
   }
 
-  update() {
-    // Rename me
-    this.handleInput();
-  }
+  update() {}
 
   render() {
     if (DEV_MODE) {
