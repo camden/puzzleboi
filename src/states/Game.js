@@ -30,6 +30,21 @@ export default class extends Phaser.State {
     });
 
     this.game.add.existing(this.mushroom);
+
+    this.createInputCallbacks();
+  }
+
+  createInputCallbacks() {
+    // pull out "onKeyDown" etc
+    // then map to command pattern
+    this.game.input.keyboard.addCallbacks(this, obj => {
+      console.log(obj);
+    });
+  }
+
+  update() {
+    // Rename me
+    this.handleInput();
   }
 
   render() {
