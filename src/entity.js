@@ -3,15 +3,16 @@
 import { Component } from 'component';
 
 export class Entity {
+  // TODO convert to set?
   components: Array<Component>;
 
   constructor() {
     this.components = [];
   }
 
-  hasAllComponents(components: Array<Component | Function>): boolean {
-    for (let component of components) {
-      if (!this.hasComponent(component)) {
+  hasAllComponents(componentNames: Array<string>): boolean {
+    for (let componentName of componentNames) {
+      if (!this.hasComponent(componentName)) {
         return false;
       }
     }
@@ -19,20 +20,10 @@ export class Entity {
     return true;
   }
 
-  // component can either be an instance of a Component
-  // or a Component class itself
-  hasComponent(component: Component | Function): boolean {
-    if (component instanceof Component) {
-      for (let ownComponent of this.components) {
-        if (component.constructor.name === ownComponent.constructor.name) {
-          return true;
-        }
-      }
-    } else {
-      for (let ownComponent of this.components) {
-        if (ownComponent instanceof component) {
-          return true;
-        }
+  hasComponent(componentName: string): boolean {
+    for (let ownComponent of this.components) {
+      if (ownComponent.name === componentName) {
+        return true;
       }
     }
 
@@ -50,5 +41,19 @@ export class Entity {
     if (index !== -1) {
       this.components.splice(index, 1);
     }
+  }
+
+  getComponent(componentName: string): Component {
+    const c = this.components.find(component => {
+      return component.name === componentName;
+    });
+
+    if (c) {
+      return c;
+    }
+
+    throw new Error(
+      `Component "${componentName}" not found on Entity "${this.toString()}"`
+    );
   }
 }

@@ -1,9 +1,9 @@
 // @flow
 import Phaser from 'phaser';
 
-import { PlayerInputSystem, System } from 'systems';
+import { RenderSystem, PlayerInputSystem, System } from 'systems';
 import { Entity } from 'entity';
-import { Moveable, Player } from 'component';
+import { Moveable, Player, Renderable } from 'component';
 
 export default class extends Phaser.State {
   entities: Array<Entity>;
@@ -17,6 +17,7 @@ export default class extends Phaser.State {
     const playerEntity = new Entity();
     playerEntity.addComponent(new Moveable());
     playerEntity.addComponent(new Player());
+    playerEntity.addComponent(new Renderable());
     this.entities.push(playerEntity);
 
     this.createGameText();
@@ -26,8 +27,8 @@ export default class extends Phaser.State {
   initializeSystems() {
     this.systems = [];
 
-    const playerInputSystem = new PlayerInputSystem(this.game);
-    this.systems.push(playerInputSystem);
+    this.systems.push(new PlayerInputSystem(this.game));
+    this.systems.push(new RenderSystem(this.game));
   }
 
   update() {
@@ -41,6 +42,7 @@ export default class extends Phaser.State {
   // TODO remove me
   createGameText() {
     const bannerText = 'Game State!';
+    debugger;
     let banner = this.add.text(
       this.world.centerX,
       this.world.centerY,
