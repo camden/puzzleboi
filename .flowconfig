@@ -3,6 +3,7 @@
 [include]
 
 [libs]
+general
 flow-typed
 
 [options]

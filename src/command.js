@@ -4,14 +4,18 @@ export interface Command {
   execute(): void,
 }
 
-export class ConsoleCommand implements Command {
-  name: string;
+export class NoOpCommand implements Command {
+  execute() {}
+}
 
-  constructor(name: string) {
-    this.name = name;
+export class ConsoleCommand implements Command {
+  input: string;
+
+  constructor(input: string) {
+    this.input = input;
   }
 
   execute() {
-    console.log(`Hello ${this.name}`);
+    console.log(`Got input: ${this.input}`);
   }
 }

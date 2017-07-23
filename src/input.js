@@ -1,12 +1,10 @@
 // @flow
 import { Command, ConsoleCommand } from './command';
+import { getCommand } from './keymap';
 
 export const onKeyUp = event => {
-  // use rotjs keys?
-  // iterate over all keys
-  if (event.key === 'c') {
-    new ConsoleCommand('cam').execute();
-  }
+  const c = getCommand(event.keyCode);
+  c.execute();
 };
 
 export const onKeyDown = event => {};
