@@ -31,20 +31,22 @@ export class PlayerInputSystem implements System {
 }
 
 export class RenderSystem implements System {
+  engine;
   game;
 
-  constructor(game) {
+  constructor(engine, game) {
+    this.engine = engine;
     this.game = game;
   }
 
   update(entities: Array<Entity>) {
     for (let entity of entities) {
       // pull this out
-      if (entity.hasAllComponents([Renderable])) {
+      if (this.engine.renderables.get(entity.uuid)) {
         this.game.add.text(
           this.game.world.centerX,
           this.game.world.centerY,
-          entity.getComponent('Name').value
+          'component!'
         );
       }
     }

@@ -3,32 +3,44 @@ import Phaser from 'phaser';
 
 import { RenderSystem, PlayerInputSystem, System } from 'systems';
 import { Entity } from 'entity';
-import { Moveable, Player, Renderable } from 'component';
+import { Moveable, Player, Renderable, Component } from 'component';
+
+type componentMap = Map<number, Component>;
 
 export default class extends Phaser.State {
-  entities: Array<Entity>;
+  // TODO Make this its own class
+  engine: {
+    [string]: componentMap,
+  };
   systems: Array<System>;
+  entities: Array<Entity>;
 
   init() {}
   preload() {}
 
   create() {
+    this.engine = {};
     this.entities = [];
+
     const playerEntity = new Entity();
-    playerEntity.addComponent(new Moveable());
-    playerEntity.addComponent(new Player());
-    playerEntity.addComponent(new Renderable());
+    // Do this automatically
+    playerEntity.uuid = 1;
     this.entities.push(playerEntity);
 
-    this.createGameText();
+    this.engine.renderables = new Map();
+    this.engine.renderables.set(
+      playerEntity.uuid,
+      new Renderable({ x: 69, y: 100 })
+    );
+
+    // this.createGameText();
     this.initializeSystems();
   }
 
   initializeSystems() {
     this.systems = [];
 
-    this.systems.push(new PlayerInputSystem(this.game));
-    this.systems.push(new RenderSystem(this.game));
+    this.systems.push(new RenderSystem(this.engine, this.game));
   }
 
   update() {
@@ -42,7 +54,6 @@ export default class extends Phaser.State {
   // TODO remove me
   createGameText() {
     const bannerText = 'Game State!';
-    debugger;
     let banner = this.add.text(
       this.world.centerX,
       this.world.centerY,
