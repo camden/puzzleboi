@@ -5,9 +5,17 @@
     "sourceType": "module"
   },
   "env": {
-    "browser": true
+    "browser": true,
+    "es6": true
   },
-  "plugins": ["import"],
+  "extends": [
+    "plugin:flowtype/recommended",
+    "eslint:recommended"
+  ],
+  "plugins": [
+    "import", 
+    "flowtype"
+  ],
   "rules": {
     "import/no-unresolved": [2]
   },

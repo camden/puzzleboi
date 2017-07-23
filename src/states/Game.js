@@ -4,13 +4,30 @@ import Phaser from 'phaser';
 import { DEV_MODE } from '../utils';
 import rot from '../../vendor/rot.min.js';
 
-import { onKeyDown, onKeyUp } from '../input';
+import { PlayerInputSystem, System } from '../systems';
 
 export default class extends Phaser.State {
+  systems: Array<System>;
+
   init() {}
   preload() {}
 
   create() {
+    this.createGameText();
+    this.initializeSystems();
+  }
+
+  initializeSystems() {
+    const playerInputSystem = new PlayerInputSystem();
+    this.createInputCallbacks({ inputSystem: playerInputSystem });
+    this.systems.push(playerInputSystem);
+  }
+
+  update() {}
+  render() {}
+
+  // TODO remove me
+  createGameText() {
     const bannerText = 'Game State!';
     let banner = this.add.text(
       this.world.centerX,
@@ -22,15 +39,9 @@ export default class extends Phaser.State {
     banner.fill = '#77BFA3';
     banner.smoothed = false;
     banner.anchor.setTo(0.5);
-
-    this.createInputCallbacks();
   }
 
-  createInputCallbacks() {
-    this.game.input.keyboard.addCallbacks(this, onKeyDown, onKeyUp);
+  createInputCallbacks({ inputSystem }: { inputSystem: System }) {
+    this.game.input.keyboard.addCallbacks(this, null, inputSystem.update);
   }
-
-  update() {}
-
-  render() {}
 }

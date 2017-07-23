@@ -40,5 +40,3 @@ export const onKeyUp = event => {
   const c = getCommand(event.keyCode);
   c.execute();
 };
-
-export const onKeyDown = event => {};
