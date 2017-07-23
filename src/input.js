@@ -1,7 +1,7 @@
 // @flow
 import Phaser from 'phaser';
 
-import { Command, ConsoleCommand, NoOpCommand } from './command';
+import { Command, ConsoleCommand, NoOpCommand } from 'command';
 
 const key = Phaser.KeyCode;
 

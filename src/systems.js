@@ -1,6 +1,6 @@
 // @flow
-import { keyMap, getCommand } from './input';
-import { Entity } from './entity';
+import { keyMap, getCommand } from 'input';
+import { Entity } from 'entity';
 
 export interface System {
   update(entities: Array<Entity>): void,

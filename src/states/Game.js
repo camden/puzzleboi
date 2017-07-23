@@ -1,8 +1,8 @@
 // @flow
 import Phaser from 'phaser';
 
-import { PlayerInputSystem, System } from '../systems';
-import { Entity } from '../entity';
+import { PlayerInputSystem, System } from 'systems';
+import { Entity } from 'entity';
 
 export default class extends Phaser.State {
   entities: Array<Entity>;
