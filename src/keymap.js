@@ -7,6 +7,9 @@ const key = Phaser.KeyCode;
 
 const commandMap = {
   MOVE_DOWN: new ConsoleCommand('move down'),
+  MOVE_UP: new ConsoleCommand('move up'),
+  MOVE_LEFT: new ConsoleCommand('move left'),
+  MOVE_RIGHT: new ConsoleCommand('move right'),
 };
 
 const keyMap: Map<KeyCode, string> = new Map();
