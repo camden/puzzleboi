@@ -3,6 +3,7 @@ import Phaser from 'phaser';
 
 import { PlayerInputSystem, System } from 'systems';
 import { Entity } from 'entity';
+import { Moveable, Player } from 'component';
 
 export default class extends Phaser.State {
   entities: Array<Entity>;
@@ -14,6 +15,8 @@ export default class extends Phaser.State {
   create() {
     this.entities = [];
     const playerEntity = new Entity();
+    playerEntity.addComponent(new Moveable());
+    playerEntity.addComponent(new Player());
     this.entities.push(playerEntity);
 
     this.createGameText();
