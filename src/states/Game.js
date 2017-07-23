@@ -18,12 +18,18 @@ export default class extends Phaser.State {
   }
 
   initializeSystems() {
-    const playerInputSystem = new PlayerInputSystem();
-    this.createInputCallbacks({ inputSystem: playerInputSystem });
+    this.systems = [];
+
+    const playerInputSystem = new PlayerInputSystem(this.game);
     this.systems.push(playerInputSystem);
   }
 
-  update() {}
+  update() {
+    for (let system of this.systems) {
+      system.update();
+    }
+  }
+
   render() {}
 
   // TODO remove me
@@ -39,9 +45,5 @@ export default class extends Phaser.State {
     banner.fill = '#77BFA3';
     banner.smoothed = false;
     banner.anchor.setTo(0.5);
-  }
-
-  createInputCallbacks({ inputSystem }: { inputSystem: System }) {
-    this.game.input.keyboard.addCallbacks(this, null, inputSystem.update);
   }
 }

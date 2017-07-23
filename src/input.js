@@ -12,7 +12,7 @@ const commandMap = {
   MOVE_RIGHT: new ConsoleCommand('move right'),
 };
 
-const keyMap: Map<KeyCode, string> = new Map();
+export const keyMap: Map<KeyCode, string> = new Map();
 keyMap.set(key.J, 'MOVE_DOWN');
 keyMap.set(key.K, 'MOVE_UP');
 keyMap.set(key.H, 'MOVE_LEFT');
@@ -22,7 +22,7 @@ keyMap.set(key.UP, 'MOVE_UP');
 keyMap.set(key.LEFT, 'MOVE_LEFT');
 keyMap.set(key.RIGHT, 'MOVE_RIGHT');
 
-const getCommand = (key: Phaser.KeyCode): Command => {
+export const getCommand = (key: Phaser.KeyCode): Command => {
   const commandString: ?string = keyMap.get(key);
 
   if (commandString) {
@@ -34,9 +34,4 @@ const getCommand = (key: Phaser.KeyCode): Command => {
   } else {
     return new NoOpCommand();
   }
-};
-
-export const onKeyUp = event => {
-  const c = getCommand(event.keyCode);
-  c.execute();
 };
