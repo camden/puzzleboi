@@ -1,9 +1,9 @@
 // @flow
-import Phaser from 'phaser';
 import { keyMap, getCommand } from './input';
+import { Entity } from './entity';
 
 export interface System {
-  update(): void,
+  update(entities: Array<Entity>): void,
 }
 
 export class PlayerInputSystem implements System {
@@ -13,10 +13,15 @@ export class PlayerInputSystem implements System {
     this.game = game;
   }
 
-  update() {
-    for (let keyCode of keyMap.keys()) {
-      if (game.input.keyboard.isDown(keyCode)) {
-        console.log('keycode is down: ' + keyCode);
+  update(entities: Array<Entity>) {
+    for (let entity of entities) {
+      // pull this out
+      if (true) {
+        for (let keyCode of keyMap.keys()) {
+          if (this.game.input.keyboard.isDown(keyCode)) {
+            console.log('keycode is down: ' + keyCode);
+          }
+        }
       }
     }
   }

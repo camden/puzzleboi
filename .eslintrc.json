@@ -8,14 +8,8 @@
     "browser": true,
     "es6": true
   },
-  "extends": [
-    "plugin:flowtype/recommended",
-    "eslint:recommended"
-  ],
-  "plugins": [
-    "import", 
-    "flowtype"
-  ],
+  "extends": ["plugin:flowtype/recommended", "eslint:recommended"],
+  "plugins": ["import", "flowtype"],
   "rules": {
     "import/no-unresolved": [2]
   },
@@ -23,6 +17,11 @@
     "phaser": true
   },
   "settings": {
-    "import/core-modules": [ "phaser", "pixi", "p2" ]
+    "import/core-modules": ["phaser", "pixi", "p2"],
+    "import/resolver": {
+      "webpack": {
+        "config": "webpack.config.js"
+      }
+    }
   }
 }

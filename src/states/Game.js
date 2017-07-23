@@ -1,18 +1,21 @@
 // @flow
 import Phaser from 'phaser';
 
-import { DEV_MODE } from '../utils';
-import rot from '../../vendor/rot.min.js';
-
 import { PlayerInputSystem, System } from '../systems';
+import { Entity } from '../entity';
 
 export default class extends Phaser.State {
+  entities: Array<Entity>;
   systems: Array<System>;
 
   init() {}
   preload() {}
 
   create() {
+    this.entities = [];
+    const playerEntity = new Entity();
+    this.entities.push(playerEntity);
+
     this.createGameText();
     this.initializeSystems();
   }
@@ -26,7 +29,7 @@ export default class extends Phaser.State {
 
   update() {
     for (let system of this.systems) {
-      system.update();
+      system.update(this.entities);
     }
   }
 

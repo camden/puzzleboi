@@ -57,6 +57,7 @@ module.exports = {
     tls: 'empty',
   },
   resolve: {
+    modules: [path.resolve('./src'), path.resolve('./node_modules')],
     alias: {
       phaser: phaser,
       pixi: pixi,
