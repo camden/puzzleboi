@@ -4,6 +4,7 @@ import Phaser from 'phaser';
 import { RenderSystem, PlayerInputSystem, System } from 'systems';
 import { Entity } from 'entity';
 import {
+  Collidable,
   ReadyForTurn,
   Transform,
   Player,
@@ -26,26 +27,37 @@ export default class extends Phaser.State {
 
   create() {
     this.engine = {};
+    this.engine.players = new Map();
+    this.engine.readyForTurns = new Map();
+    this.engine.collidables = new Map();
+    this.engine.transforms = new Map();
+    this.engine.renderables = new Map();
+
     this.entities = [];
+
+    const wallEntity = new Entity();
+    wallEntity.uuid = 2;
+    this.entities.push(wallEntity);
+    this.engine.collidables.set(wallEntity.uuid, new Collidable());
+    this.engine.transforms.set(wallEntity.uuid, new Transform({ x: 4, y: 6 }));
+    this.engine.renderables.set(
+      wallEntity.uuid,
+      new Renderable({
+        glyph: 'W',
+      })
+    );
 
     const playerEntity = new Entity();
     // Do this automatically
     playerEntity.uuid = 1;
     this.entities.push(playerEntity);
-
-    this.engine.players = new Map();
     this.engine.players.set(playerEntity.uuid, new Player());
-
-    this.engine.readyForTurns = new Map();
     this.engine.readyForTurns.set(playerEntity.uuid, new ReadyForTurn());
-
-    this.engine.transforms = new Map();
+    this.engine.collidables.set(playerEntity.uuid, new Collidable());
     this.engine.transforms.set(
       playerEntity.uuid,
       new Transform({ x: 1, y: 2 })
     );
-
-    this.engine.renderables = new Map();
     this.engine.renderables.set(
       playerEntity.uuid,
       new Renderable({

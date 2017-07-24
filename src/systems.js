@@ -57,7 +57,7 @@ export class RenderSystem implements System {
     // Init map - should this be somewhere else?
     const MAP_WIDTH = 10;
     const MAP_HEIGHT = 10;
-    const blankChar = '🐝';
+    const blankChar = '·';
     // TODO this is ugly... use a camera
     const spacing = 20;
     const x_offset = 30;
@@ -71,7 +71,10 @@ export class RenderSystem implements System {
           x_offset + x * spacing,
           // Multiply by -1 to make origin at bottom left
           y_offset + y * spacing * -1,
-          blankChar
+          blankChar,
+          {
+            font: '20pt Monaco, monospace',
+          }
         );
         this.map[x][y] = cell;
       }

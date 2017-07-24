@@ -32,5 +32,7 @@ export class Transform extends Component {
   }
 }
 
+export class Collidable extends Component {}
+
 export class Player extends Component {}
 export class ReadyForTurn extends Component {}

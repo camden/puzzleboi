@@ -52,8 +52,11 @@ export class MoveCommand implements Command {
         break;
     }
 
-    transform.x += x_delta;
-    transform.y += y_delta;
+    const next_x = transform.x + x_delta;
+    const next_y = transform.y + y_delta;
+    // TODO add collision checking
+    transform.x = next_x;
+    transform.y = next_y;
 
     console.log(
       `Moving entity '${entity.toString()}' in direction '${this
