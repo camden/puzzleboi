@@ -1,6 +1,6 @@
 // @flow
 import { keyMap, getCommand } from 'input';
-import { Entity } from 'entity';
+import type { Entity } from 'entity';
 import { ReadyForTurn, Renderable, Moveable, Player } from 'component';
 
 export interface System {
@@ -21,17 +21,17 @@ export class PlayerInputSystem implements System {
     // https://github.com/libgdx/ashley/wiki/How-to-use-Ashley#entity-systems
     for (let entity of entities) {
       // TODO pull this out
-      const playerComponent = this.engine.players.get(entity.uuid);
-      const readyForTurnComponent = this.engine.readyForTurns.get(entity.uuid);
+      const playerComponent = this.engine.players.get(entity);
+      const readyForTurnComponent = this.engine.readyForTurns.get(entity);
 
       if (playerComponent && readyForTurnComponent) {
         for (let keyCode of keyMap.keys()) {
           if (this.game.input.keyboard.isDown(keyCode)) {
             getCommand(keyCode).execute(this.engine, entity);
-            this.engine.readyForTurns.delete(entity.uuid);
+            this.engine.readyForTurns.delete(entity);
             // TODO This is terrible
             setTimeout(() => {
-              this.engine.readyForTurns.set(entity.uuid, new ReadyForTurn());
+              this.engine.readyForTurns.set(entity, new ReadyForTurn());
             }, 100);
           }
         }
@@ -109,8 +109,8 @@ export class RenderSystem implements System {
       // TODO pull this out
       // Add a way to check for certain components
       // Perhaps, add a map from "TRANSFORM" to this.engine.transforms... or something?
-      const renderable = this.engine.renderables.get(entity.uuid);
-      const transform = this.engine.transforms.get(entity.uuid);
+      const renderable = this.engine.renderables.get(entity);
+      const transform = this.engine.transforms.get(entity);
       // Eventually do a bitmask?
       if (renderable && transform) {
         // TODO Rename this

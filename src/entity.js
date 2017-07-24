@@ -1,9 +1,3 @@
 // @flow
 
-export class Entity {
-  uuid: number;
-
-  toString() {
-    return `{Entity uuid: ${this.uuid}}`;
-  }
-}
+export type Entity = number;

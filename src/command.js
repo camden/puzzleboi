@@ -1,5 +1,6 @@
 // @flow
-import { Entity } from 'entity';
+import type { Entity } from 'entity';
+import { getEntitiesAtPosition } from 'utils';
 
 export interface Command {
   execute(engine: *, entity: Entity): void,
@@ -29,7 +30,7 @@ export class MoveCommand implements Command {
   }
 
   execute(engine: *, entity: Entity) {
-    const transform = engine.transforms.get(entity.uuid);
+    const transform = engine.transforms.get(entity);
 
     let x_delta = 0;
     let y_delta = 0;
@@ -55,11 +56,17 @@ export class MoveCommand implements Command {
     const next_x = transform.x + x_delta;
     const next_y = transform.y + y_delta;
     // TODO add collision checking
+    const entities_on_tile = getEntitiesAtPosition({
+      engine: engine,
+      x: next_x,
+      y: next_y,
+    });
+    console.log(entities_on_tile);
     transform.x = next_x;
     transform.y = next_y;
 
     console.log(
-      `Moving entity '${entity.toString()}' in direction '${this
+      `Moving entity '${entity}' in direction '${this
         .direction}' -> New position: ${transform.toString()}`
     );
   }

@@ -2,7 +2,7 @@
 import Phaser from 'phaser';
 
 import { RenderSystem, PlayerInputSystem, System } from 'systems';
-import { Entity } from 'entity';
+import type { Entity } from 'entity';
 import {
   Collidable,
   ReadyForTurn,
@@ -27,6 +27,7 @@ export default class extends Phaser.State {
 
   create() {
     this.engine = {};
+
     this.engine.players = new Map();
     this.engine.readyForTurns = new Map();
     this.engine.collidables = new Map();
@@ -35,31 +36,26 @@ export default class extends Phaser.State {
 
     this.entities = [];
 
-    const wallEntity = new Entity();
-    wallEntity.uuid = 2;
+    const wallEntity = 2;
     this.entities.push(wallEntity);
-    this.engine.collidables.set(wallEntity.uuid, new Collidable());
-    this.engine.transforms.set(wallEntity.uuid, new Transform({ x: 4, y: 6 }));
+    this.engine.collidables.set(wallEntity, new Collidable());
+    this.engine.transforms.set(wallEntity, new Transform({ x: 4, y: 6 }));
     this.engine.renderables.set(
-      wallEntity.uuid,
+      wallEntity,
       new Renderable({
         glyph: 'W',
       })
     );
 
-    const playerEntity = new Entity();
     // Do this automatically
-    playerEntity.uuid = 1;
+    const playerEntity = 1;
     this.entities.push(playerEntity);
-    this.engine.players.set(playerEntity.uuid, new Player());
-    this.engine.readyForTurns.set(playerEntity.uuid, new ReadyForTurn());
-    this.engine.collidables.set(playerEntity.uuid, new Collidable());
-    this.engine.transforms.set(
-      playerEntity.uuid,
-      new Transform({ x: 1, y: 2 })
-    );
+    this.engine.players.set(playerEntity, new Player());
+    this.engine.readyForTurns.set(playerEntity, new ReadyForTurn());
+    this.engine.collidables.set(playerEntity, new Collidable());
+    this.engine.transforms.set(playerEntity, new Transform({ x: 1, y: 2 }));
     this.engine.renderables.set(
-      playerEntity.uuid,
+      playerEntity,
       new Renderable({
         glyph: '@',
       })
@@ -83,19 +79,4 @@ export default class extends Phaser.State {
   }
 
   render() {}
-
-  // TODO remove me
-  createGameText() {
-    const bannerText = 'Game State!';
-    let banner = this.add.text(
-      this.world.centerX,
-      this.world.centerY,
-      bannerText
-    );
-    banner.padding.set(10, 16);
-    banner.fontSize = 40;
-    banner.fill = '#77BFA3';
-    banner.smoothed = false;
-    banner.anchor.setTo(0.5);
-  }
 }
