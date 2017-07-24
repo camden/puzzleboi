@@ -56,12 +56,26 @@ export class MoveCommand implements Command {
     const next_x = transform.x + x_delta;
     const next_y = transform.y + y_delta;
     // TODO add collision checking
+    // TODO do i like camel case or snake case more?
     const entities_on_tile = getEntitiesAtPosition({
       engine: engine,
       x: next_x,
       y: next_y,
     });
-    console.log(entities_on_tile);
+
+    const collidablesOnNextTile = entities_on_tile.reduce(
+      (anyEntitiesOnTile, entity) => {
+        // Here is where you would dispatch a "collision" event!!
+        return anyEntitiesOnTile || engine.collidables.has(entity);
+      },
+      false
+    );
+
+    if (collidablesOnNextTile) {
+      // Here is where you would dispatch a "collision" event!!
+      return;
+    }
+
     transform.x = next_x;
     transform.y = next_y;
 
