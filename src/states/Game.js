@@ -3,7 +3,13 @@ import Phaser from 'phaser';
 
 import { RenderSystem, PlayerInputSystem, System } from 'systems';
 import { Entity } from 'entity';
-import { Transform, Player, Renderable, Component } from 'component';
+import {
+  ReadyForTurn,
+  Transform,
+  Player,
+  Renderable,
+  Component,
+} from 'component';
 
 type componentMap = Map<number, Component>;
 
@@ -29,6 +35,9 @@ export default class extends Phaser.State {
 
     this.engine.players = new Map();
     this.engine.players.set(playerEntity.uuid, new Player());
+
+    this.engine.readyForTurns = new Map();
+    this.engine.readyForTurns.set(playerEntity.uuid, new ReadyForTurn());
 
     this.engine.transforms = new Map();
     this.engine.transforms.set(

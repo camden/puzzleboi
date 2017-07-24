@@ -1,7 +1,7 @@
 // @flow
 import { keyMap, getCommand } from 'input';
 import { Entity } from 'entity';
-import { Renderable, Moveable, Player } from 'component';
+import { ReadyForTurn, Renderable, Moveable, Player } from 'component';
 
 export interface System {
   update(entities: Array<Entity>): void,
@@ -17,16 +17,22 @@ export class PlayerInputSystem implements System {
   }
 
   update(entities: Array<Entity>) {
-    // In the future, do this:
+    // TODO In the future, do this:
     // https://github.com/libgdx/ashley/wiki/How-to-use-Ashley#entity-systems
     for (let entity of entities) {
-      // pull this out
+      // TODO pull this out
       const playerComponent = this.engine.players.get(entity.uuid);
+      const readyForTurnComponent = this.engine.readyForTurns.get(entity.uuid);
 
-      if (playerComponent) {
+      if (playerComponent && readyForTurnComponent) {
         for (let keyCode of keyMap.keys()) {
           if (this.game.input.keyboard.isDown(keyCode)) {
             getCommand(keyCode).execute(this.engine, entity);
+            this.engine.readyForTurns.delete(entity.uuid);
+            // TODO This is terrible
+            setTimeout(() => {
+              this.engine.readyForTurns.set(entity.uuid, new ReadyForTurn());
+            }, 100);
           }
         }
       }
@@ -51,6 +57,7 @@ export class RenderSystem implements System {
     // Init map - should this be somewhere else?
     const MAP_WIDTH = 10;
     const MAP_HEIGHT = 10;
+    const blankChar = '🐝';
     // TODO this is ugly... use a camera
     const spacing = 20;
     const x_offset = 30;
@@ -64,7 +71,7 @@ export class RenderSystem implements System {
           x_offset + x * spacing,
           // Multiply by -1 to make origin at bottom left
           y_offset + y * spacing * -1,
-          '.'
+          blankChar
         );
         this.map[x][y] = cell;
       }
@@ -75,7 +82,7 @@ export class RenderSystem implements System {
     this.clear = () => {
       for (let x = 0; x < MAP_WIDTH; x++) {
         for (let y = 0; y < MAP_HEIGHT; y++) {
-          this.map[x][y].setText('.');
+          this.map[x][y].setText(blankChar);
         }
       }
     };
