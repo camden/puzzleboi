@@ -3,7 +3,7 @@ import Phaser from 'phaser';
 
 import { RenderSystem, PlayerInputSystem, System } from 'systems';
 import { Entity } from 'entity';
-import { Moveable, Player, Renderable, Component } from 'component';
+import { Transform, Player, Renderable, Component } from 'component';
 
 type componentMap = Map<number, Component>;
 
@@ -30,14 +30,14 @@ export default class extends Phaser.State {
     this.engine.players = new Map();
     this.engine.players.set(playerEntity.uuid, new Player());
 
-    this.engine.moveables = new Map();
-    this.engine.moveables.set(playerEntity.uuid, new Moveable());
+    this.engine.transforms = new Map();
+    this.engine.transforms.set(
+      playerEntity.uuid,
+      new Transform({ x: 1, y: 2 })
+    );
 
     this.engine.renderables = new Map();
-    this.engine.renderables.set(
-      playerEntity.uuid,
-      new Renderable({ x: 69, y: 100 })
-    );
+    this.engine.renderables.set(playerEntity.uuid, new Renderable());
 
     // this.createGameText();
     this.initializeSystems();
