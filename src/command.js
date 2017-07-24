@@ -1,7 +1,8 @@
 // @flow
+import { Entity } from 'entity';
 
 export interface Command {
-  execute(): void,
+  execute(game: *, entity: Entity): void,
 }
 
 export class NoOpCommand implements Command {
@@ -17,5 +18,19 @@ export class ConsoleCommand implements Command {
 
   execute() {
     console.log(`Got input: ${this.input}`);
+  }
+}
+
+export class MoveCommand implements Command {
+  direction: string;
+
+  constructor(direction: string) {
+    this.direction = direction;
+  }
+
+  execute(game: *, entity: Entity) {
+    console.log(
+      `Moving entity '${entity.toString()}' in direction '${this.direction}'`
+    );
   }
 }

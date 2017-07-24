@@ -1,15 +1,15 @@
 // @flow
 import Phaser from 'phaser';
 
-import { Command, ConsoleCommand, NoOpCommand } from 'command';
+import { Command, MoveCommand, ConsoleCommand, NoOpCommand } from 'command';
 
 const key = Phaser.KeyCode;
 
 const commandMap = {
-  MOVE_DOWN: new ConsoleCommand('move down'),
-  MOVE_UP: new ConsoleCommand('move up'),
-  MOVE_LEFT: new ConsoleCommand('move left'),
-  MOVE_RIGHT: new ConsoleCommand('move right'),
+  MOVE_DOWN: new MoveCommand('down'),
+  MOVE_UP: new MoveCommand('up'),
+  MOVE_LEFT: new MoveCommand('left'),
+  MOVE_RIGHT: new MoveCommand('right'),
 };
 
 export const keyMap: Map<KeyCode, string> = new Map();

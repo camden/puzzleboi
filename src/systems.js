@@ -8,9 +8,11 @@ export interface System {
 }
 
 export class PlayerInputSystem implements System {
+  engine;
   game;
 
-  constructor(game) {
+  constructor(engine, game) {
+    this.engine = engine;
     this.game = game;
   }
 
@@ -19,10 +21,12 @@ export class PlayerInputSystem implements System {
     // https://github.com/libgdx/ashley/wiki/How-to-use-Ashley#entity-systems
     for (let entity of entities) {
       // pull this out
-      if (entity.hasAllComponents(['Player'])) {
+      const playerComponent = this.engine.players.get(entity.uuid);
+
+      if (playerComponent) {
         for (let keyCode of keyMap.keys()) {
           if (this.game.input.keyboard.isDown(keyCode)) {
-            console.log('keycode is down: ' + keyCode);
+            getCommand(keyCode).execute(this.engine, entity);
           }
         }
       }
@@ -42,12 +46,16 @@ export class RenderSystem implements System {
   update(entities: Array<Entity>) {
     for (let entity of entities) {
       // pull this out
-      if (this.engine.renderables.get(entity.uuid)) {
-        this.game.add.text(
-          this.game.world.centerX,
-          this.game.world.centerY,
-          'component!'
-        );
+      // Add a way to check for certain components
+      const renderable = this.engine.renderables.get(entity.uuid);
+      // Eventually do a bitmask?
+      if (renderable) {
+        // TODO This is adding text EVERY FRAME
+        // this.game.add.text(
+        //   this.game.world.centerX,
+        //   this.game.world.centerY,
+        //   `component is at (${renderable.x}, ${renderable.y})`
+        // );
       }
     }
   }

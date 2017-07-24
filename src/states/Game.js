@@ -27,6 +27,12 @@ export default class extends Phaser.State {
     playerEntity.uuid = 1;
     this.entities.push(playerEntity);
 
+    this.engine.players = new Map();
+    this.engine.players.set(playerEntity.uuid, new Player());
+
+    this.engine.moveables = new Map();
+    this.engine.moveables.set(playerEntity.uuid, new Moveable());
+
     this.engine.renderables = new Map();
     this.engine.renderables.set(
       playerEntity.uuid,
@@ -41,6 +47,7 @@ export default class extends Phaser.State {
     this.systems = [];
 
     this.systems.push(new RenderSystem(this.engine, this.game));
+    this.systems.push(new PlayerInputSystem(this.engine, this.game));
   }
 
   update() {
