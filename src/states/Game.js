@@ -37,7 +37,12 @@ export default class extends Phaser.State {
     );
 
     this.engine.renderables = new Map();
-    this.engine.renderables.set(playerEntity.uuid, new Renderable());
+    this.engine.renderables.set(
+      playerEntity.uuid,
+      new Renderable({
+        glyph: '@',
+      })
+    );
 
     // this.createGameText();
     this.initializeSystems();

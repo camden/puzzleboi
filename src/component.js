@@ -2,7 +2,19 @@
 
 export class Component {}
 
-export class Renderable extends Component {}
+export class Renderable extends Component {
+  glyph: string;
+
+  constructor({ glyph }: { glyph: string }) {
+    super();
+
+    if (glyph.length !== 1) {
+      throw new Error('Glyph length must equal 1.');
+    }
+
+    this.glyph = glyph;
+  }
+}
 
 export class Transform extends Component {
   // TODO Put this in position class
