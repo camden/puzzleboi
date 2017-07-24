@@ -64,9 +64,11 @@ export class MoveCommand implements Command {
     });
 
     const collidablesOnNextTile = entities_on_tile.reduce(
-      (anyEntitiesOnTile, entity) => {
+      (anyEntitiesOnTile, entityOnTile) => {
         // Here is where you would dispatch a "collision" event!!
-        return anyEntitiesOnTile || engine.collidables.has(entity);
+        const collidableHere = engine.collidables.has(entityOnTile);
+        engine.log.push(`Entity '${entity}' bumped into '${entityOnTile}'`);
+        return anyEntitiesOnTile || collidableHere;
       },
       false
     );
