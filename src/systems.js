@@ -38,24 +38,25 @@ export class RenderSystem implements System {
   engine;
   game;
 
+  renderText;
+
   constructor(engine, game) {
     this.engine = engine;
     this.game = game;
+
+    this.renderText = this.game.add.text(0, 0, 'hi');
   }
 
   update(entities: Array<Entity>) {
     for (let entity of entities) {
       // pull this out
       // Add a way to check for certain components
+      // Perhaps, add a map from "TRANSFORM" to this.engine.transforms... or something?
       const renderable = this.engine.renderables.get(entity.uuid);
+      const transform = this.engine.transforms.get(entity.uuid);
       // Eventually do a bitmask?
-      if (renderable) {
-        // TODO This is adding text EVERY FRAME
-        // this.game.add.text(
-        //   this.game.world.centerX,
-        //   this.game.world.centerY,
-        //   `component is at (${renderable.x}, ${renderable.y})`
-        // );
+      if (renderable && transform) {
+        this.renderText.setText(`Player position: ${transform.toString()}`);
       }
     }
   }
