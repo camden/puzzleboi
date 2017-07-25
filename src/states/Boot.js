@@ -3,7 +3,11 @@ import Phaser from 'phaser';
 
 export default class extends Phaser.State {
   init() {
-    this.stage.backgroundColor = '#EDEEC9';
+    const hue = Math.random();
+    const saturation = 1;
+    const lightness = 0.98;
+    const color = Phaser.Color.HSLtoRGB(hue, saturation, lightness).color;
+    this.stage.setBackgroundColor(color);
   }
 
   preload() {
