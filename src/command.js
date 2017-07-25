@@ -1,7 +1,7 @@
 // @flow
 import type { Entity } from 'entity';
 import ComponentManager from 'component-manager';
-import { Transform, Collidable } from 'component';
+import { Metadata, Transform, Collidable } from 'component';
 import MapConfig from 'config/map.json';
 
 import { clamp, getEntitiesAtPosition } from 'utils';
@@ -88,19 +88,34 @@ export class MoveCommand implements Command {
         if (entityOnTile === entity) {
           return anyEntitiesOnTile;
         }
-        // Here is where you would dispatch a "collision" event!!
+        // Here is where you would dispatch a specific "collision" event!!
         // TODO DO GENERICS NOT CASTING
         const collidableHere = componentManager.has({
           entity: entityOnTile,
           component: Collidable,
         });
+        if (collidableHere) {
+          let entityOnTileName = entityOnTile;
+          let entityOnTileMetadata = componentManager.get({
+            entity: entityOnTile,
+            component: Metadata,
+          });
+          if (entityOnTileMetadata) {
+            entityOnTileName = entityOnTileMetadata.name;
+          }
+          const currentEntityName = componentManager.get({
+            entity: entity,
+            component: Metadata,
+          }).name;
+          console.log(`${currentEntityName} bumped into ${entityOnTileName}.`);
+        }
         return anyEntitiesOnTile || collidableHere;
       },
       false
     );
 
     if (collidablesOnNextTile) {
-      // Here is where you would dispatch a "collision" event!!
+      // Here is where you would dispatch a generic "collision" event!!
       return;
     }
 

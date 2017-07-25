@@ -5,12 +5,14 @@ import { Component } from 'component';
 
 type componentMap = Map<number, Component>;
 
-const getComponentName = (component: Function) => {
-  if (component.name) {
-    return component.name;
+const getComponentName = (component: Function | Component) => {
+  if (typeof component === 'function') {
+    if (component.name) {
+      return component.name;
+    }
   }
 
-  if (component.constructor.name !== 'Function') {
+  if (typeof component === 'object') {
     return component.constructor.name;
   }
 
@@ -28,7 +30,15 @@ const initComponents = ({ componentList }: { components: Array<Function> }) => {
 };
 
 // This mutates the Map
-const addOne = ({ currentComponents, entity, component }) => {
+const addOne = ({
+  currentComponents,
+  entity,
+  component,
+}: {
+  currentComponents: *,
+  entity: Entity,
+  component: Component,
+}) => {
   const componentName = getComponentName(component);
 
   if (!currentComponents.has(componentName)) {

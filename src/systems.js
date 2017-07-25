@@ -53,6 +53,8 @@ export class PlayerInputSystem implements System {
                 components: [new ReadyForTurn()],
               });
             }, 100);
+            // This 'return' is to make sure that user can't do multiple inputs in one turn
+            return;
           }
         }
       }
@@ -68,8 +70,6 @@ export class RenderSystem implements System {
   clear: Function;
   map;
 
-  renderText;
-
   constructor(componentManager, game) {
     this.componentManager = componentManager;
     this.game = game;
@@ -79,7 +79,7 @@ export class RenderSystem implements System {
     const MAP_HEIGHT = MapConfig.height;
     const blankChar = '·';
     // TODO this is ugly... use a camera
-    const spacing = 20;
+    const spacing = 30;
     const x_offset = 30;
     const y_offset = 300;
     this.map = new Array(MAP_WIDTH);
@@ -99,8 +99,6 @@ export class RenderSystem implements System {
         this.map[x][y] = cell;
       }
     }
-
-    console.log(this.map);
 
     this.clear = () => {
       for (let x = 0; x < MAP_WIDTH; x++) {

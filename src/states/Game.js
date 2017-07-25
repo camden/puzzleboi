@@ -4,6 +4,7 @@ import Phaser from 'phaser';
 import { RenderSystem, PlayerInputSystem, System } from 'systems';
 import type { Entity } from 'entity';
 import {
+  Metadata,
   Collidable,
   ReadyForTurn,
   Transform,
@@ -29,20 +30,28 @@ export default class extends Phaser.State {
 
     this.componentManager = new ComponentManager();
     this.componentManager.register({
-      components: [Player, ReadyForTurn, Collidable, Transform, Renderable],
+      components: [
+        Metadata,
+        Player,
+        ReadyForTurn,
+        Collidable,
+        Transform,
+        Renderable,
+      ],
     });
 
     this.entities = [];
 
-    const wallEntity = 2;
-    this.entities.push(wallEntity);
+    const treeEntity = 2;
+    this.entities.push(treeEntity);
 
     this.componentManager.add({
-      entity: wallEntity,
+      entity: treeEntity,
       components: [
         new Collidable(),
         new Transform({ x: 1, y: 6 }),
-        new Renderable({ glyph: 'W' }),
+        new Renderable({ glyph: 'T' }),
+        new Metadata({ name: 'Tree', description: 'A majestic Oak tree.' }),
       ],
     });
 
@@ -57,6 +66,10 @@ export default class extends Phaser.State {
         new ReadyForTurn(),
         new Transform({ x: 1, y: 4 }),
         new Renderable({ glyph: '@' }),
+        new Metadata({
+          name: 'Player (you)',
+          description: 'The hero of our tale.',
+        }),
       ],
     });
 

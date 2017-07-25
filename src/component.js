@@ -32,6 +32,17 @@ export class Transform extends Component {
   }
 }
 
+export class Metadata extends Component {
+  name: string;
+  description: string;
+
+  constructor({ name, description }: { name: string, description: string }) {
+    super();
+    this.name = name;
+    this.description = description;
+  }
+}
+
 export class Collidable extends Component {}
 
 export class Player extends Component {}
