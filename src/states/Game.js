@@ -11,14 +11,11 @@ import {
   Renderable,
   Component,
 } from 'component';
-
-type componentMap = Map<number, Component>;
+import ComponentManager from 'component-manager';
 
 export default class extends Phaser.State {
   // TODO Make this its own class
-  engine: {
-    [string]: componentMap,
-  };
+  componentManager: ComponentManager;
   systems: Array<System>;
   entities: Array<Entity>;
 
@@ -30,38 +27,38 @@ export default class extends Phaser.State {
 
     this.engine.log = ['log initialized'];
 
-    this.engine.players = new Map();
-    this.engine.readyForTurns = new Map();
-    this.engine.collidables = new Map();
-    this.engine.transforms = new Map();
-    this.engine.renderables = new Map();
+    this.componentManager = new ComponentManager();
+    this.componentManager.register({
+      components: [Player, ReadyForTurn, Collidable, Transform, Renderable],
+    });
 
     this.entities = [];
 
     const wallEntity = 2;
     this.entities.push(wallEntity);
-    this.engine.collidables.set(wallEntity, new Collidable());
-    this.engine.transforms.set(wallEntity, new Transform({ x: 1, y: 6 }));
-    this.engine.renderables.set(
-      wallEntity,
-      new Renderable({
-        glyph: 'W',
-      })
-    );
+
+    this.componentManager.add({
+      entity: wallEntity,
+      components: [
+        new Collidable(),
+        new Transform({ x: 1, y: 6 }),
+        new Renderable({ glyph: 'W' }),
+      ],
+    });
 
     // Do this automatically
     const playerEntity = 1;
     this.entities.push(playerEntity);
-    this.engine.players.set(playerEntity, new Player());
-    this.engine.readyForTurns.set(playerEntity, new ReadyForTurn());
-    this.engine.collidables.set(playerEntity, new Collidable());
-    this.engine.transforms.set(playerEntity, new Transform({ x: 1, y: 2 }));
-    this.engine.renderables.set(
-      playerEntity,
-      new Renderable({
-        glyph: '@',
-      })
-    );
+    this.componentManager.add({
+      entity: playerEntity,
+      components: [
+        new Collidable(),
+        new Player(),
+        new ReadyForTurn(),
+        new Transform({ x: 1, y: 4 }),
+        new Renderable({ glyph: '@' }),
+      ],
+    });
 
     this.initializeSystems();
     this.log = this.game.add.text('', 200, 10, {
@@ -74,8 +71,8 @@ export default class extends Phaser.State {
   initializeSystems() {
     this.systems = [];
 
-    this.systems.push(new RenderSystem(this.engine, this.game));
-    this.systems.push(new PlayerInputSystem(this.engine, this.game));
+    this.systems.push(new RenderSystem(this.componentManager, this.game));
+    this.systems.push(new PlayerInputSystem(this.componentManager, this.game));
   }
 
   update() {

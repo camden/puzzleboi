@@ -1,9 +1,12 @@
 // @flow
 import type { Entity } from 'entity';
+import ComponentManager from 'component-manager';
+import { Transform, Collidable } from 'component';
+
 import { getEntitiesAtPosition } from 'utils';
 
 export interface Command {
-  execute(engine: *, entity: Entity): void,
+  execute(componentManager: ComponentManager, entity: Entity): void,
 }
 
 export class NoOpCommand implements Command {
@@ -29,8 +32,11 @@ export class MoveCommand implements Command {
     this.direction = direction;
   }
 
-  execute(engine: *, entity: Entity) {
-    const transform = engine.transforms.get(entity);
+  execute(componentManager: ComponentManager, entity: Entity) {
+    const transform = componentManager.get({
+      entity: entity,
+      component: Transform,
+    });
 
     let x_delta = 0;
     let y_delta = 0;
@@ -58,7 +64,7 @@ export class MoveCommand implements Command {
     // TODO add collision checking
     // TODO do i like camel case or snake case more?
     const entities_on_tile = getEntitiesAtPosition({
-      engine: engine,
+      componentManager: componentManager,
       x: next_x,
       y: next_y,
     });
@@ -66,8 +72,10 @@ export class MoveCommand implements Command {
     const collidablesOnNextTile = entities_on_tile.reduce(
       (anyEntitiesOnTile, entityOnTile) => {
         // Here is where you would dispatch a "collision" event!!
-        const collidableHere = engine.collidables.has(entityOnTile);
-        engine.log.push(`Entity '${entity}' bumped into '${entityOnTile}'`);
+        const collidableHere = componentManager.has({
+          entity: entityOnTile,
+          component: Collidable,
+        });
         return anyEntitiesOnTile || collidableHere;
       },
       false
