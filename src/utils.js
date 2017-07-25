@@ -1,14 +1,23 @@
 // @flow
 
 import type { Entity } from 'entity';
+import { Transform } from 'component';
 
-export const getEntitiesAtPosition = ({ engine, x, y }): Array<Entity> => {
+export const getEntitiesAtPosition = ({
+  componentManager,
+  x,
+  y,
+}): Array<Entity> => {
   const entities = [];
-  engine.transforms.forEach((transform, entity) => {
-    if (transform.x === x && transform.y === y) {
-      entities.push(entity);
-    }
-  });
+  componentManager
+    .getAll({
+      component: Transform,
+    })
+    .forEach((transform, entity) => {
+      if (transform.x === x && transform.y === y) {
+        entities.push(entity);
+      }
+    });
 
   return entities;
 };

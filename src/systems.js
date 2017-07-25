@@ -1,18 +1,25 @@
 // @flow
 import { keyMap, getCommand } from 'input';
 import type { Entity } from 'entity';
-import { ReadyForTurn, Renderable, Moveable, Player } from 'component';
+import {
+  Transform,
+  ReadyForTurn,
+  Renderable,
+  Moveable,
+  Player,
+} from 'component';
+import ComponentManager from 'component-manager';
 
 export interface System {
   update(entities: Array<Entity>): void,
 }
 
 export class PlayerInputSystem implements System {
-  engine;
+  componentManager;
   game;
 
-  constructor(engine, game) {
-    this.engine = engine;
+  constructor(componentManager, game) {
+    this.componentManager = componentManager;
     this.game = game;
   }
 
@@ -21,17 +28,29 @@ export class PlayerInputSystem implements System {
     // https://github.com/libgdx/ashley/wiki/How-to-use-Ashley#entity-systems
     for (let entity of entities) {
       // TODO pull this out
-      const playerComponent = this.engine.players.get(entity);
-      const readyForTurnComponent = this.engine.readyForTurns.get(entity);
+      const playerComponent = this.componentManager.get({
+        entity: entity,
+        component: Player,
+      });
+      const readyForTurnComponent = this.componentManager.get({
+        entity: entity,
+        component: ReadyForTurn,
+      });
 
       if (playerComponent && readyForTurnComponent) {
         for (let keyCode of keyMap.keys()) {
           if (this.game.input.keyboard.isDown(keyCode)) {
-            getCommand(keyCode).execute(this.engine, entity);
-            this.engine.readyForTurns.delete(entity);
+            getCommand(keyCode).execute(this.componentManager, entity);
+            this.componentManager.remove({
+              entity: entity,
+              component: ReadyForTurn,
+            });
             // TODO This is terrible
             setTimeout(() => {
-              this.engine.readyForTurns.set(entity, new ReadyForTurn());
+              this.componentManager.add({
+                entity: entity,
+                components: [new ReadyForTurn()],
+              });
             }, 100);
           }
         }
@@ -41,7 +60,7 @@ export class PlayerInputSystem implements System {
 }
 
 export class RenderSystem implements System {
-  engine;
+  componentManager;
   game;
   // TODO remove this
   draw: Function;
@@ -50,8 +69,8 @@ export class RenderSystem implements System {
 
   renderText;
 
-  constructor(engine, game) {
-    this.engine = engine;
+  constructor(componentManager, game) {
+    this.componentManager = componentManager;
     this.game = game;
 
     // Init map - should this be somewhere else?
@@ -106,11 +125,15 @@ export class RenderSystem implements System {
   update(entities: Array<Entity>) {
     this.clear();
     for (let entity of entities) {
-      // TODO pull this out
-      // Add a way to check for certain components
-      // Perhaps, add a map from "TRANSFORM" to this.engine.transforms... or something?
-      const renderable = this.engine.renderables.get(entity);
-      const transform = this.engine.transforms.get(entity);
+      const renderable = this.componentManager.get({
+        entity: entity,
+        component: Renderable,
+      });
+      const transform = this.componentManager.get({
+        entity: entity,
+        component: Transform,
+      });
+
       // Eventually do a bitmask?
       if (renderable && transform) {
         // TODO Rename this

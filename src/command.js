@@ -72,6 +72,7 @@ export class MoveCommand implements Command {
     const collidablesOnNextTile = entities_on_tile.reduce(
       (anyEntitiesOnTile, entityOnTile) => {
         // Here is where you would dispatch a "collision" event!!
+        // TODO DO GENERICS NOT CASTING
         const collidableHere = componentManager.has({
           entity: entityOnTile,
           component: Collidable,
