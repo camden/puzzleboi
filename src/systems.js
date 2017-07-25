@@ -9,6 +9,7 @@ import {
   Player,
 } from 'component';
 import ComponentManager from 'component-manager';
+import MapConfig from 'config/map.json';
 
 export interface System {
   update(entities: Array<Entity>): void,
@@ -74,8 +75,8 @@ export class RenderSystem implements System {
     this.game = game;
 
     // Init map - should this be somewhere else?
-    const MAP_WIDTH = 10;
-    const MAP_HEIGHT = 10;
+    const MAP_WIDTH = MapConfig.width;
+    const MAP_HEIGHT = MapConfig.height;
     const blankChar = '·';
     // TODO this is ugly... use a camera
     const spacing = 20;

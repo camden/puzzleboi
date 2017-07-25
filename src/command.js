@@ -2,8 +2,9 @@
 import type { Entity } from 'entity';
 import ComponentManager from 'component-manager';
 import { Transform, Collidable } from 'component';
+import MapConfig from 'config/map.json';
 
-import { getEntitiesAtPosition } from 'utils';
+import { clamp, getEntitiesAtPosition } from 'utils';
 
 export interface Command {
   execute(componentManager: ComponentManager, entity: Entity): void,
@@ -59,8 +60,21 @@ export class MoveCommand implements Command {
         break;
     }
 
-    const next_x = transform.x + x_delta;
-    const next_y = transform.y + y_delta;
+    let next_x = transform.x + x_delta;
+    let next_y = transform.y + y_delta;
+
+    next_x = clamp({
+      value: next_x,
+      min: 0,
+      max: MapConfig.width - 1,
+    });
+
+    next_y = clamp({
+      value: next_y,
+      min: 0,
+      max: MapConfig.height - 1,
+    });
+
     // TODO add collision checking
     // TODO do i like camel case or snake case more?
     const entities_on_tile = getEntitiesAtPosition({
@@ -71,6 +85,9 @@ export class MoveCommand implements Command {
 
     const collidablesOnNextTile = entities_on_tile.reduce(
       (anyEntitiesOnTile, entityOnTile) => {
+        if (entityOnTile === entity) {
+          return anyEntitiesOnTile;
+        }
         // Here is where you would dispatch a "collision" event!!
         // TODO DO GENERICS NOT CASTING
         const collidableHere = componentManager.has({
@@ -83,6 +100,7 @@ export class MoveCommand implements Command {
     );
 
     if (collidablesOnNextTile) {
+      console.log('Collided!');
       // Here is where you would dispatch a "collision" event!!
       return;
     }
