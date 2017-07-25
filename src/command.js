@@ -100,17 +100,11 @@ export class MoveCommand implements Command {
     );
 
     if (collidablesOnNextTile) {
-      console.log('Collided!');
       // Here is where you would dispatch a "collision" event!!
       return;
     }
 
     transform.x = next_x;
     transform.y = next_y;
-
-    console.log(
-      `Moving entity '${entity}' in direction '${this
-        .direction}' -> New position: ${transform.toString()}`
-    );
   }
 }
