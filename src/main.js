@@ -13,6 +13,11 @@ import config from 'config/game.json';
 class Game extends Phaser.Game {
   constructor() {
     const docElement = document.documentElement;
+
+    if (!docElement) {
+      throw new Error('Could not retrieve document.documentElement.');
+    }
+
     const width =
       docElement.clientWidth > config.gameWidth
         ? config.gameWidth
