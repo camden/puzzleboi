@@ -34,7 +34,7 @@ export class MoveCommand implements Command {
   }
 
   execute(componentManager: ComponentManager, entity: Entity) {
-    const transform = componentManager.get({
+    let transform = componentManager.get({
       entity: entity,
       component: Transform,
     });

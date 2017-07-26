@@ -1,6 +1,6 @@
 // @flow
 
-import { Entity } from 'entity';
+import type { Entity } from 'entity';
 import { Component } from 'component';
 
 type componentMap = Map<number, Component>;
@@ -16,10 +16,14 @@ const getComponentName = (component: Function | Component) => {
     return component.constructor.name;
   }
 
-  throw new Error(`Could not get name for component: ${component}`);
+  throw new Error(`Could not get name for component.`);
 };
 
-const initComponents = ({ componentList }: { components: Array<Function> }) => {
+const initComponents = ({
+  componentList,
+}: {
+  componentList: Array<Function>,
+}) => {
   const outputComponents = new Map();
 
   for (let component of componentList) {
@@ -53,6 +57,24 @@ const addOne = ({
   currentComponents.get(componentName).set(entity, component);
 };
 
+function get<ComponentType>({
+  currentComponents,
+  entity,
+  component,
+}: {
+  currentComponents: *,
+  entity: Entity,
+  component: Function,
+}): ComponentType {
+  const componentName = getComponentName(component);
+
+  if (!currentComponents.has(componentName)) {
+    throw new Error(`Component '${componentName}' not registered!`);
+  }
+
+  return currentComponents.get(componentName).get(entity);
+}
+
 export default class ComponentManager {
   components: Map<string, componentMap>;
 
@@ -80,20 +102,12 @@ export default class ComponentManager {
     }
   }
 
-  get({
-    entity,
-    component,
-  }: {
-    entity: Entity,
-    component: Function,
-  }): Component {
-    const componentName = getComponentName(component);
-
-    if (!this.components.has(componentName)) {
-      throw new Error(`Component '${componentName}' not registered!`);
-    }
-
-    return this.components.get(componentName).get(entity);
+  get({ entity, component }: { entity: Entity, component: Function }) {
+    return get({
+      currentComponents: this.components,
+      entity: entity,
+      component: component,
+    });
   }
 
   getAll({ component }: { component: Function }): Array<Component> {
