@@ -13,6 +13,8 @@ import {
   Component,
 } from 'component';
 import ComponentManager from 'component-manager';
+import ROT from '../../vendor/rot.min.js';
+import MapConfig from 'config/map.json';
 
 export default class extends Phaser.State {
   // TODO Make this its own class
@@ -42,17 +44,26 @@ export default class extends Phaser.State {
 
     this.entities = [];
 
-    const treeEntity = 2;
-    this.entities.push(treeEntity);
+    const rm = new ROT.Map.DividedMaze(MapConfig.width, MapConfig.height);
 
-    this.componentManager.add({
-      entity: treeEntity,
-      components: [
-        new Collidable(),
-        new Transform({ x: 1, y: 6 }),
-        new Renderable({ glyph: 'T' }),
-        new Metadata({ name: 'Tree', description: 'A majestic Oak tree.' }),
-      ],
+    let nextEntity = 2;
+
+    rm.create((x, y, createWallNumber) => {
+      if (createWallNumber === 0) {
+        return;
+      }
+
+      this.entities.push(nextEntity);
+      this.componentManager.add({
+        entity: nextEntity,
+        components: [
+          new Collidable(),
+          new Transform({ x: x, y: y }),
+          new Renderable({ glyph: 'W' }),
+          new Metadata({ name: 'Wall', description: 'A solid stone wall.' }),
+        ],
+      });
+      nextEntity++;
     });
 
     // Do this automatically

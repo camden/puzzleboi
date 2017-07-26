@@ -73,7 +73,7 @@ export class RenderSystem implements System {
     const MAP_HEIGHT = MapConfig.height;
     const blankChar = '·';
     // TODO this is ugly... use a camera
-    const spacing = 30;
+    const spacing = 20;
     const x_offset = 30;
     const y_offset = 300;
     this.map = new Array(MAP_WIDTH);
@@ -87,7 +87,7 @@ export class RenderSystem implements System {
           y_offset + y * spacing * -1,
           blankChar,
           {
-            font: '20pt Monaco, monospace',
+            font: '10pt Monaco, monospace',
           }
         );
         this.map[x][y] = cell;
