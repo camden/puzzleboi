@@ -56,7 +56,7 @@ export const clamp = ({
     min !== null &&
     max !== undefined &&
     max !== null &&
-    max > min
+    min > max
   ) {
     throw new Error('Min cannot be greater than Max for clamp()');
   }
