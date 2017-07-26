@@ -1,12 +1,17 @@
 // @flow
 
 import type { Entity } from 'entity';
-import { Transform } from 'component';
+import { Component, Transform } from 'component';
+import ComponentManager from 'component-manager';
 
 export const getEntitiesAtPosition = ({
   componentManager,
   x,
   y,
+}: {
+  componentManager: ComponentManager,
+  x: number,
+  y: number,
 }): Array<Entity> => {
   const entities = [];
   componentManager
