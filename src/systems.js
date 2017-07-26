@@ -1,13 +1,7 @@
 // @flow
 import { keyMap, getCommand } from 'input';
 import type { Entity } from 'entity';
-import {
-  Transform,
-  ReadyForTurn,
-  Renderable,
-  Moveable,
-  Player,
-} from 'component';
+import { Transform, ReadyForTurn, Renderable, Player } from 'component';
 import ComponentManager from 'component-manager';
 import MapConfig from 'config/map.json';
 
@@ -16,10 +10,10 @@ export interface System {
 }
 
 export class PlayerInputSystem implements System {
-  componentManager;
-  game;
+  componentManager: ComponentManager;
+  game: *;
 
-  constructor(componentManager, game) {
+  constructor(componentManager: ComponentManager, game: *) {
     this.componentManager = componentManager;
     this.game = game;
   }
@@ -63,14 +57,14 @@ export class PlayerInputSystem implements System {
 }
 
 export class RenderSystem implements System {
-  componentManager;
-  game;
+  componentManager: ComponentManager;
+  game: *;
   // TODO remove this
   draw: Function;
   clear: Function;
-  map;
+  map: Array<Array<*>>;
 
-  constructor(componentManager, game) {
+  constructor(componentManager: ComponentManager, game: *) {
     this.componentManager = componentManager;
     this.game = game;
 
