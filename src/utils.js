@@ -46,16 +46,27 @@ export const clamp = ({
     throw new Error('Either min or max value must be specified for clamp()');
   }
 
-  if (minExists && maxExists && min > max) {
+  if (
+    min !== undefined &&
+    min !== null &&
+    max !== undefined &&
+    max !== null &&
+    max > min
+  ) {
     throw new Error('Min cannot be greater than Max for clamp()');
   }
 
-  if (minExists && value < min) {
-    return min;
+  // Not using `minExists` because Flow would yell at me otherwise :)
+  if (min !== undefined && min !== null) {
+    if (value < min) {
+      return min;
+    }
   }
 
-  if (maxExists && value > max) {
-    return max;
+  if (max !== undefined && max !== null) {
+    if (value > max) {
+      return max;
+    }
   }
 
   return value;
