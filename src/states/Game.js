@@ -90,6 +90,9 @@ export default class extends Phaser.State {
       wordWrapWidth: 100,
     });
     this.log.alignIn(this.game.world.bounds, Phaser.RIGHT_TOP, -400);
+
+    this.fps = this.game.add.text(0, 0, 10);
+    this.game.time.advancedTiming = true;
   }
 
   initializeSystems() {
@@ -105,6 +108,7 @@ export default class extends Phaser.State {
     }
 
     this.log.setText(this.engine.log.slice().reverse().join('\n'));
+    this.fps.setText(this.game.time.fps);
   }
 
   render() {}
