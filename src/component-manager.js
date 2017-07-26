@@ -2,22 +2,85 @@
 
 import type { Entity } from 'entity';
 import { Component } from 'component';
+import { getComponentName } from 'utils';
 
 type componentMap = Map<number, Component>;
 
-const getComponentName = (component: Function | Component) => {
-  if (typeof component === 'function') {
-    if (component.name) {
-      return component.name;
+export default class ComponentManager {
+  components: Map<string, componentMap>;
+
+  constructor() {}
+
+  register({ components }: { components: Array<Function> }) {
+    this.components = initComponents({
+      componentList: components,
+    });
+  }
+
+  add({
+    entity,
+    components,
+  }: {
+    entity: Entity,
+    components: Array<Component>,
+  }) {
+    for (let component of components) {
+      addOne({
+        currentComponents: this.components,
+        entity: entity,
+        component: component,
+      });
     }
   }
 
-  if (typeof component === 'object') {
-    return component.constructor.name;
+  get({ entity, component }: { entity: Entity, component: Function }) {
+    return get({
+      currentComponents: this.components,
+      entity: entity,
+      component: component,
+    });
   }
 
-  throw new Error(`Could not get name for component.`);
-};
+  // TODO rename to queryAll... I like that name better
+  getAll({ component }: { component: Function }): componentMap {
+    const componentName = getComponentName(component);
+    const existingComponentMap = this.components.get(componentName);
+
+    if (!existingComponentMap) {
+      throw new Error(`Component '${componentName}' not registered!`);
+    }
+
+    return existingComponentMap;
+  }
+
+  has({ entity, component }: { entity: Entity, component: Function }): boolean {
+    const componentName = getComponentName(component);
+    const existingComponentMap = this.components.get(componentName);
+
+    if (!existingComponentMap) {
+      throw new Error(`Component '${componentName}' not registered!`);
+    }
+
+    return existingComponentMap.has(entity);
+  }
+
+  remove({
+    entity,
+    component,
+  }: {
+    entity: Entity,
+    component: Function,
+  }): boolean {
+    const componentName = getComponentName(component);
+    const existingComponentMap = this.components.get(componentName);
+
+    if (!existingComponentMap) {
+      throw new Error(`Component '${componentName}' not registered!`);
+    }
+
+    return existingComponentMap.delete(entity);
+  }
+}
 
 const initComponents = ({
   componentList,
@@ -75,76 +138,4 @@ function get<ComponentType>({
   }
 
   return currentComponents.get(componentName).get(entity);
-}
-
-export default class ComponentManager {
-  components: Map<string, componentMap>;
-
-  constructor() {}
-
-  register({ components }: { components: Array<Function> }) {
-    this.components = initComponents({
-      componentList: components,
-    });
-  }
-
-  add({
-    entity,
-    components,
-  }: {
-    entity: Entity,
-    components: Array<Component>,
-  }) {
-    for (let component of components) {
-      addOne({
-        currentComponents: this.components,
-        entity: entity,
-        component: component,
-      });
-    }
-  }
-
-  get({ entity, component }: { entity: Entity, component: Function }) {
-    return get({
-      currentComponents: this.components,
-      entity: entity,
-      component: component,
-    });
-  }
-
-  getAll({ component }: { component: Function }): Array<Component> {
-    const componentName = getComponentName(component);
-
-    if (!this.components.has(componentName)) {
-      throw new Error(`Component '${componentName}' not registered!`);
-    }
-
-    return this.components.get(componentName);
-  }
-
-  has({ entity, component }: { entity: Entity, component: Function }): boolean {
-    const componentName = getComponentName(component);
-
-    if (!this.components.has(componentName)) {
-      throw new Error(`Component '${componentName}' not registered!`);
-    }
-
-    return this.components.get(componentName).has(entity);
-  }
-
-  remove({
-    entity,
-    component,
-  }: {
-    entity: Entity,
-    component: Function,
-  }): Component {
-    const componentName = getComponentName(component);
-
-    if (!this.components.has(componentName)) {
-      throw new Error(`Component '${componentName}' not registered!`);
-    }
-
-    return this.components.get(componentName).delete(entity);
-  }
 }

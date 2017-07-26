@@ -78,5 +78,19 @@ export const centerGameObjects = (objects: Array<{ anchor: { setTo: * } }>) => {
   });
 };
 
+export const getComponentName = (component: Function | Component) => {
+  if (typeof component === 'function') {
+    if (component.name) {
+      return component.name;
+    }
+  }
+
+  if (typeof component === 'object') {
+    return component.constructor.name;
+  }
+
+  throw new Error(`Could not get name for component.`);
+};
+
 declare var __DEV__: boolean;
 export const DEV_MODE = __DEV__;
