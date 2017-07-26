@@ -44,17 +44,19 @@ const addOne = ({
   component: Component,
 }) => {
   const componentName = getComponentName(component);
+  const existingComponentMap = currentComponents.get(componentName);
 
-  if (!currentComponents.has(componentName)) {
+  if (!existingComponentMap) {
     throw new Error(`Component '${componentName}' not registered!`);
   }
 
-  if (currentComponents.get(componentName).has(entity)) {
+  if (existingComponentMap && existingComponentMap.has(entity)) {
     console.warn(
       `Replacing component '${componentName}' on entity '${entity}'`
     );
   }
-  currentComponents.get(componentName).set(entity, component);
+
+  existingComponentMap.set(entity, component);
 };
 
 function get<ComponentType>({
@@ -80,7 +82,7 @@ export default class ComponentManager {
 
   constructor() {}
 
-  register({ components }) {
+  register({ components }: { components: Array<Function> }) {
     this.components = initComponents({
       componentList: components,
     });
