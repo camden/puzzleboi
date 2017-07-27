@@ -44,7 +44,8 @@ export default class extends Phaser.State {
 
     this.entities = [];
 
-    const rm = new ROT.Map.DividedMaze(MapConfig.width, MapConfig.height);
+    const rm = new ROT.Map.Cellular(MapConfig.width, MapConfig.height);
+    rm.randomize(0.4);
 
     let nextEntity = 2;
 
