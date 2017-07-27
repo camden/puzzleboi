@@ -45,5 +45,18 @@ export class Metadata extends Component {
 
 export class Collidable extends Component {}
 
+export class Actor extends Component {}
 export class Player extends Component {}
-export class ReadyForTurn extends Component {}
+
+export class Turn extends Component {
+  speed: number;
+  nextTurnTime: number;
+  myTurn: boolean;
+
+  constructor({ speed }: { speed: number }) {
+    super();
+    this.myTurn = false;
+    this.speed = speed;
+    this.nextTurnTime = speed;
+  }
+}

@@ -1,16 +1,22 @@
 // @flow
 import Phaser from 'phaser';
 
-import { RenderSystem, PlayerInputSystem, System } from 'systems';
+import {
+  TurnSystem,
+  AISystem,
+  RenderSystem,
+  PlayerInputSystem,
+  System,
+} from 'systems';
 import type { Entity } from 'entity';
 import {
   Metadata,
   Collidable,
-  ReadyForTurn,
+  Turn,
   Transform,
   Player,
   Renderable,
-  Component,
+  Actor,
 } from 'component';
 import ComponentManager from 'component-manager';
 import ROT from '../../vendor/rot.min.js';
@@ -19,7 +25,10 @@ import MapConfig from 'config/map.json';
 export default class extends Phaser.State {
   // TODO Make this its own class
   componentManager: ComponentManager;
-  systems: Array<System>;
+  systems: {
+    render: Array<System>,
+    update: Array<System>,
+  };
   entities: Array<Entity>;
 
   init() {}
@@ -33,9 +42,10 @@ export default class extends Phaser.State {
     this.componentManager = new ComponentManager();
     this.componentManager.register({
       components: [
+        Actor,
         Metadata,
         Player,
-        ReadyForTurn,
+        Turn,
         Collidable,
         Transform,
         Renderable,
@@ -47,7 +57,7 @@ export default class extends Phaser.State {
     const rm = new ROT.Map.Cellular(MapConfig.width, MapConfig.height);
     rm.randomize(0.4);
 
-    let nextEntity = 2;
+    let nextEntity = 3;
 
     rm.create((x, y, createWallNumber) => {
       if (createWallNumber === 0) {
@@ -67,6 +77,24 @@ export default class extends Phaser.State {
       nextEntity++;
     });
 
+    // TODO add assemblages
+    const enemyEntity = 2;
+    this.entities.push(enemyEntity);
+    this.componentManager.add({
+      entity: enemyEntity,
+      components: [
+        new Collidable(),
+        new Turn({ speed: 10 }),
+        new Transform({ x: 2, y: 4 }),
+        new Renderable({ glyph: 'S' }),
+        new Actor(),
+        new Metadata({
+          name: 'Skeleton',
+          description: 'A spooky boneman',
+        }),
+      ],
+    });
+
     // Do this automatically
     const playerEntity = 1;
     this.entities.push(playerEntity);
@@ -75,7 +103,7 @@ export default class extends Phaser.State {
       components: [
         new Collidable(),
         new Player(),
-        new ReadyForTurn(),
+        new Turn({ speed: 10 }),
         new Transform({ x: 1, y: 4 }),
         new Renderable({ glyph: '@' }),
         new Metadata({
@@ -97,14 +125,24 @@ export default class extends Phaser.State {
   }
 
   initializeSystems() {
-    this.systems = [];
+    this.systems = {
+      update: [],
+      render: [],
+    };
 
-    this.systems.push(new RenderSystem(this.componentManager, this.game));
-    this.systems.push(new PlayerInputSystem(this.componentManager, this.game));
+    this.systems.render.push(
+      new RenderSystem(this.componentManager, this.game)
+    );
+
+    this.systems.update.push(
+      new TurnSystem(this.componentManager, this.game),
+      new AISystem(this.componentManager, this.game),
+      new PlayerInputSystem(this.componentManager, this.game)
+    );
   }
 
   update() {
-    for (let system of this.systems) {
+    for (let system of this.systems.update) {
       system.update(this.entities);
     }
 
@@ -112,5 +150,9 @@ export default class extends Phaser.State {
     this.fps.setText(this.game.time.fps);
   }
 
-  render() {}
+  render() {
+    for (let system of this.systems.render) {
+      system.update(this.entities);
+    }
+  }
 }

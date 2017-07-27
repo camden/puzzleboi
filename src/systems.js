@@ -1,12 +1,117 @@
 // @flow
 import { keyMap, getCommand } from 'input';
 import type { Entity } from 'entity';
-import { Transform, ReadyForTurn, Renderable, Player } from 'component';
+import {
+  Metadata,
+  Actor,
+  Player,
+  Renderable,
+  Transform,
+  Turn,
+} from 'component';
 import ComponentManager from 'component-manager';
 import MapConfig from 'config/map.json';
 
 export interface System {
   update(entities: Array<Entity>): void,
+}
+
+// TODO move each one into its own file
+export class AISystem implements System {
+  componentManager: ComponentManager;
+  game: *;
+
+  constructor(componentManager: ComponentManager, game: *) {
+    this.componentManager = componentManager;
+    this.game = game;
+  }
+
+  update(entities: Array<Entity>) {
+    // TODO In the future, do this:
+    // https://github.com/libgdx/ashley/wiki/How-to-use-Ashley#entity-systems
+    for (let entity of entities) {
+      // TODO pull this out
+      const turnComponent = this.componentManager.get({
+        entity: entity,
+        component: Turn,
+      });
+      const actorComponent = this.componentManager.get({
+        entity: entity,
+        component: Actor,
+      });
+
+      if (turnComponent && actorComponent) {
+        if (!turnComponent.myTurn) {
+          return;
+        }
+
+        const metadata = this.componentManager.get({
+          entity: entity,
+          component: Metadata,
+        });
+
+        if (metadata) {
+          console.log(`${metadata.name} acted.`);
+        }
+
+        turnComponent.myTurn = false;
+      }
+    }
+  }
+}
+
+export class TurnSystem implements System {
+  componentManager: ComponentManager;
+  game: *;
+
+  constructor(componentManager: ComponentManager, game: *) {
+    this.componentManager = componentManager;
+    this.game = game;
+  }
+
+  update(entities: Array<Entity>) {
+    // TODO In the future, do this:
+    // https://github.com/libgdx/ashley/wiki/How-to-use-Ashley#entity-systems
+    let nextToAct: Turn;
+
+    for (let entity of entities) {
+      // TODO pull this out
+      const turnComponent = this.componentManager.get({
+        entity: entity,
+        component: Turn,
+      });
+
+      if (turnComponent) {
+        if (turnComponent.myTurn) {
+          // TODO Add helper for getting name
+          const metadata = this.componentManager.get({
+            entity: entity,
+            component: Metadata,
+          });
+
+          if (metadata) {
+            // console.log(`${metadata.name}'s turn to act.'`);
+          }
+          return;
+        }
+
+        if (!nextToAct) {
+          nextToAct = turnComponent;
+        }
+
+        if (turnComponent.nextTurnTime < nextToAct.nextTurnTime) {
+          nextToAct = turnComponent;
+        }
+      }
+    }
+
+    if (!nextToAct) {
+      throw new Error('Could not find next actor to act.');
+    }
+
+    nextToAct.myTurn = true;
+    nextToAct.nextTurnTime += nextToAct.speed;
+  }
 }
 
 export class PlayerInputSystem implements System {
@@ -27,28 +132,19 @@ export class PlayerInputSystem implements System {
         entity: entity,
         component: Player,
       });
-      const readyForTurnComponent = this.componentManager.get({
+      const turnComponent = this.componentManager.get({
         entity: entity,
-        component: ReadyForTurn,
+        component: Turn,
       });
 
-      if (playerComponent && readyForTurnComponent) {
+      if (playerComponent && turnComponent) {
         for (let keyCode of keyMap.keys()) {
-          if (this.game.input.keyboard.isDown(keyCode)) {
+          if (
+            this.game.input.keyboard.isDown(keyCode) &&
+            turnComponent.myTurn
+          ) {
             getCommand(keyCode).execute(this.componentManager, entity);
-            this.componentManager.remove({
-              entity: entity,
-              component: ReadyForTurn,
-            });
-            // TODO This is terrible
-            setTimeout(() => {
-              this.componentManager.add({
-                entity: entity,
-                components: [new ReadyForTurn()],
-              });
-            }, 100);
-            // This 'return' is to make sure that user can't do multiple inputs in one turn
-            return;
+            turnComponent.myTurn = false;
           }
         }
       }
