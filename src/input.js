@@ -35,3 +35,10 @@ export const getCommand = (key: Phaser.KeyCode): Command => {
     return new NoOpCommand();
   }
 };
+
+export const onKeyPress = (event, componentManager) => {
+  // Force the uppercase letter
+  const keyCode = event.key.toUpperCase().charCodeAt(0);
+  const command = getCommand(keyCode);
+  command.execute(componentManager);
+};

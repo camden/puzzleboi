@@ -1,13 +1,7 @@
 // @flow
 import Phaser from 'phaser';
 
-import {
-  TurnSystem,
-  AISystem,
-  RenderSystem,
-  PlayerInputSystem,
-  System,
-} from 'systems';
+import { TurnSystem, AISystem, RenderSystem, System } from 'systems';
 import type { Entity } from 'entity';
 import {
   Metadata,
@@ -18,6 +12,7 @@ import {
   Renderable,
   Actor,
 } from 'component';
+import { onKeyPress } from 'input';
 import ComponentManager from 'component-manager';
 import ROT from '../../vendor/rot.min.js';
 import MapConfig from 'config/map.json';
@@ -113,7 +108,8 @@ export default class extends Phaser.State {
       ],
     });
 
-    this.initializeSystems();
+    this.systems = this.initializeSystems();
+
     this.log = this.game.add.text('', 200, 10, {
       font: '10pt Monaco, monospace',
       wordWrapWidth: 100,
@@ -122,23 +118,30 @@ export default class extends Phaser.State {
 
     this.fps = this.game.add.text(0, 0, 10);
     this.game.time.advancedTiming = true;
+
+    window.addEventListener(
+      'keypress',
+      event => {
+        onKeyPress(event, this.componentManager);
+      },
+      false
+    );
   }
 
   initializeSystems() {
-    this.systems = {
+    const systems = {
       update: [],
       render: [],
     };
 
-    this.systems.render.push(
-      new RenderSystem(this.componentManager, this.game)
+    systems.render.push(new RenderSystem(this.componentManager, this.game));
+
+    systems.update.push(
+      new TurnSystem(this.componentManager, this.game),
+      new AISystem(this.componentManager, this.game)
     );
 
-    this.systems.update.push(
-      new TurnSystem(this.componentManager, this.game),
-      new AISystem(this.componentManager, this.game),
-      new PlayerInputSystem(this.componentManager, this.game)
-    );
+    return systems;
   }
 
   update() {

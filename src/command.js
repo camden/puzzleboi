@@ -1,13 +1,13 @@
 // @flow
 import type { Entity } from 'entity';
 import ComponentManager from 'component-manager';
-import { Metadata, Transform, Collidable } from 'component';
+import { Player, Turn, Metadata, Transform, Collidable } from 'component';
 import MapConfig from 'config/map.json';
 
 import { clamp, getEntitiesAtPosition } from 'utils';
 
 export interface Command {
-  execute(componentManager: ComponentManager, entity: Entity): void,
+  execute(componentManager: ComponentManager): void,
 }
 
 export class NoOpCommand implements Command {
@@ -33,93 +33,116 @@ export class MoveCommand implements Command {
     this.direction = direction;
   }
 
-  execute(componentManager: ComponentManager, entity: Entity) {
-    let transform = componentManager.get({
-      entity: entity,
-      component: Transform,
+  execute(componentManager: ComponentManager) {
+    const playerComponents = componentManager.getAll({
+      component: Player,
     });
 
-    let x_delta = 0;
-    let y_delta = 0;
+    playerComponents.forEach((playerComponent, entity) => {
+      let transform = componentManager.get({
+        entity: entity,
+        component: Transform,
+      });
 
-    // Don't use "up", "down", etc... enum? or x/y?
-    switch (this.direction) {
-      case 'right':
-        x_delta = 1;
-        break;
-      case 'left':
-        x_delta = -1;
-        break;
-      case 'up':
-        y_delta = 1;
-        break;
-      case 'down':
-        y_delta = -1;
-        break;
-      default:
-        break;
-    }
+      let turnComponent = componentManager.get({
+        entity: entity,
+        component: Turn,
+      });
 
-    let next_x = transform.x + x_delta;
-    let next_y = transform.y + y_delta;
+      if (!turnComponent || !transform) {
+        return;
+      }
 
-    next_x = clamp({
-      value: next_x,
-      min: 0,
-      max: MapConfig.width - 1,
-    });
+      if (!turnComponent.myTurn) {
+        return;
+      }
 
-    next_y = clamp({
-      value: next_y,
-      min: 0,
-      max: MapConfig.height - 1,
-    });
+      let x_delta = 0;
+      let y_delta = 0;
 
-    // TODO add collision checking
-    // TODO do i like camel case or snake case more?
-    const entities_on_tile = getEntitiesAtPosition({
-      componentManager: componentManager,
-      x: next_x,
-      y: next_y,
-    });
+      // Don't use "up", "down", etc... enum? or x/y?
+      switch (this.direction) {
+        case 'right':
+          x_delta = 1;
+          break;
+        case 'left':
+          x_delta = -1;
+          break;
+        case 'up':
+          y_delta = 1;
+          break;
+        case 'down':
+          y_delta = -1;
+          break;
+        default:
+          break;
+      }
 
-    const collidablesOnNextTile = entities_on_tile.reduce(
-      (anyEntitiesOnTile, entityOnTile) => {
-        if (entityOnTile === entity) {
-          return anyEntitiesOnTile;
-        }
-        // Here is where you would dispatch a specific "collision" event!!
-        // TODO DO GENERICS NOT CASTING
-        const collidableHere = componentManager.has({
-          entity: entityOnTile,
-          component: Collidable,
-        });
-        if (collidableHere) {
-          let entityOnTileName = entityOnTile;
-          let entityOnTileMetadata = componentManager.get({
-            entity: entityOnTile,
-            component: Metadata,
-          });
-          if (entityOnTileMetadata) {
-            entityOnTileName = entityOnTileMetadata.name;
+      let next_x = transform.x + x_delta;
+      let next_y = transform.y + y_delta;
+
+      next_x = clamp({
+        value: next_x,
+        min: 0,
+        max: MapConfig.width - 1,
+      });
+
+      next_y = clamp({
+        value: next_y,
+        min: 0,
+        max: MapConfig.height - 1,
+      });
+
+      // TODO add collision checking
+      // TODO do i like camel case or snake case more?
+      const entities_on_tile = getEntitiesAtPosition({
+        componentManager: componentManager,
+        x: next_x,
+        y: next_y,
+      });
+
+      const collidablesOnNextTile = entities_on_tile.reduce(
+        (anyEntitiesOnTile, entityOnTile) => {
+          if (entityOnTile === entity) {
+            return anyEntitiesOnTile;
           }
-          const currentEntityName = componentManager.get({
-            entity: entity,
-            component: Metadata,
-          }).name;
-          console.log(`${currentEntityName} bumped into ${entityOnTileName}.`);
-        }
-        return anyEntitiesOnTile || collidableHere;
-      },
-      false
-    );
+          // Here is where you would dispatch a specific "collision" event!!
+          // TODO DO GENERICS NOT CASTING
+          const collidableHere = componentManager.has({
+            entity: entityOnTile,
+            component: Collidable,
+          });
+          if (collidableHere) {
+            let entityOnTileName = entityOnTile;
+            let entityOnTileMetadata = componentManager.get({
+              entity: entityOnTile,
+              component: Metadata,
+            });
+            if (entityOnTileMetadata) {
+              entityOnTileName = entityOnTileMetadata.name;
+            }
+            const currentEntityName = componentManager.get({
+              entity: entity,
+              component: Metadata,
+            }).name;
+            console.log(
+              `${currentEntityName} bumped into ${entityOnTileName}.`
+            );
+          }
+          return anyEntitiesOnTile || collidableHere;
+        },
+        false
+      );
 
-    if (collidablesOnNextTile) {
-      // Here is where you would dispatch a generic "collision" event!!
-      return;
-    }
+      if (collidablesOnNextTile) {
+        // Here is where you would dispatch a generic "collision" event!!
+        return;
+      }
 
-    transform.x = next_x;
-    transform.y = next_y;
+      transform.x = next_x;
+      transform.y = next_y;
+
+      turnComponent.myTurn = false;
+    });
   }
 }

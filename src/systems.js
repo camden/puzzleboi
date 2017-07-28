@@ -45,6 +45,11 @@ export class AISystem implements System {
           return;
         }
 
+        const transformComponent = this.componentManager.get({
+          entity: entity,
+          component: Transform,
+        });
+
         const metadata = this.componentManager.get({
           entity: entity,
           component: Metadata,
@@ -111,44 +116,6 @@ export class TurnSystem implements System {
 
     nextToAct.myTurn = true;
     nextToAct.nextTurnTime += nextToAct.speed;
-  }
-}
-
-export class PlayerInputSystem implements System {
-  componentManager: ComponentManager;
-  game: *;
-
-  constructor(componentManager: ComponentManager, game: *) {
-    this.componentManager = componentManager;
-    this.game = game;
-  }
-
-  update(entities: Array<Entity>) {
-    // TODO In the future, do this:
-    // https://github.com/libgdx/ashley/wiki/How-to-use-Ashley#entity-systems
-    for (let entity of entities) {
-      // TODO pull this out
-      const playerComponent = this.componentManager.get({
-        entity: entity,
-        component: Player,
-      });
-      const turnComponent = this.componentManager.get({
-        entity: entity,
-        component: Turn,
-      });
-
-      if (playerComponent && turnComponent) {
-        for (let keyCode of keyMap.keys()) {
-          if (
-            this.game.input.keyboard.isDown(keyCode) &&
-            turnComponent.myTurn
-          ) {
-            getCommand(keyCode).execute(this.componentManager, entity);
-            turnComponent.myTurn = false;
-          }
-        }
-      }
-    }
   }
 }
 
