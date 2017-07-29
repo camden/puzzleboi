@@ -1,4 +1,5 @@
 // @flow
+import { Graph, astar as AStar } from 'javascript-astar';
 import { keyMap, getCommand } from 'input';
 import type { Entity } from 'entity';
 import {
@@ -51,29 +52,70 @@ export class AISystem implements System {
         });
 
         if (transformComponent) {
-          const nearby_distance = 5;
+          if (actorComponent.tactics.move_towards_player) {
+            const nearby_distance =
+              actorComponent.tactics.move_towards_player.sight;
 
-          const nearbyEntities = Array.from(
-            this.componentManager.getAll({
-              component: Transform,
-            })
-          )
-            .filter(entry => {
-              const entity = entry[0];
-              const transform = entry[1];
+            const nearbyEntities = Array.from(
+              this.componentManager.getAll({
+                component: Transform,
+              })
+            )
+              .filter(entry => {
+                const transform = entry[1];
 
-              const XInRange =
-                Math.abs(transform.x - transformComponent.x) < nearby_distance;
-              const YInRange =
-                Math.abs(transform.y - transformComponent.y) < nearby_distance;
-              return XInRange && YInRange;
-            })
-            .map(entry => {
-              const entity = entry[0];
-              return entity;
-            });
+                const XInRange =
+                  Math.abs(transform.x - transformComponent.x) <
+                  nearby_distance;
+                const YInRange =
+                  Math.abs(transform.y - transformComponent.y) <
+                  nearby_distance;
+                return XInRange && YInRange;
+              })
+              .map(entry => {
+                const entity = entry[0];
+                return entity;
+              })
+              .filter(entity => {
+                // TODO For now, do it like this
+                // in the future, add a "hostility" to dynamically determine
+                // what entity you are targeting
+                const entityPlayerComponent = this.componentManager.get({
+                  entity: entity,
+                  component: Player,
+                });
 
-          console.log('Nearby: ' + nearbyEntities);
+                return !!entityPlayerComponent;
+              });
+
+            const target = nearbyEntities[0];
+            if (target) {
+              const targetTransform = this.componentManager.get({
+                entity: target,
+                component: Transform,
+              });
+
+              if (targetTransform) {
+                // now path towards target
+                const mapArray = new Array(MapConfig.width);
+                for (let x = 0; x < MapConfig.width; x++) {
+                  mapArray[x] = [];
+                  for (let y = 0; y < MapConfig.height; y++) {
+                    mapArray[x][y] = 1;
+                  }
+                }
+
+                const graph = new Graph(mapArray);
+                const startX = transformComponent.x;
+                const startY = transformComponent.y;
+                const goalX = targetTransform.x;
+                const goalY = targetTransform.y;
+                const startPoint = graph.grid[startX][startY];
+                const goalPoint = graph.grid[goalX][goalY];
+                const path = AStar.search(graph, startPoint, goalPoint);
+              }
+            }
+          }
         }
 
         const metadata = this.componentManager.get({

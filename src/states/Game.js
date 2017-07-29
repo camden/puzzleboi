@@ -85,8 +85,8 @@ export default class extends Phaser.State {
         new Actor({
           // TODO make these classes, not strings
           tactics: {
-            flee_from_player: {
-              distance: 5,
+            move_towards_player: {
+              sight: 5,
             },
           },
         }),

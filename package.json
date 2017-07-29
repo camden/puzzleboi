@@ -43,6 +43,7 @@
     "webpack": "^2.6.1"
   },
   "dependencies": {
+    "javascript-astar": "^0.4.1",
     "phaser-ce": "^2.8.0",
     "webfontloader": "^1.6.28"
   }
