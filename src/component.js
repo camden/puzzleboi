@@ -45,7 +45,15 @@ export class Metadata extends Component {
 
 export class Collidable extends Component {}
 
-export class Actor extends Component {}
+export class Actor extends Component {
+  tactics: { [string]: any };
+
+  constructor({ tactics }: { tactics: { [string]: any } }) {
+    super();
+    this.tactics = tactics;
+  }
+}
+
 export class Player extends Component {}
 
 export class Turn extends Component {

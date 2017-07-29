@@ -2,9 +2,9 @@
 import { keyMap, getCommand } from 'input';
 import type { Entity } from 'entity';
 import {
+  Player,
   Metadata,
   Actor,
-  Player,
   Renderable,
   Transform,
   Turn,
@@ -49,6 +49,32 @@ export class AISystem implements System {
           entity: entity,
           component: Transform,
         });
+
+        if (transformComponent) {
+          const nearby_distance = 5;
+
+          const nearbyEntities = Array.from(
+            this.componentManager.getAll({
+              component: Transform,
+            })
+          )
+            .filter(entry => {
+              const entity = entry[0];
+              const transform = entry[1];
+
+              const XInRange =
+                Math.abs(transform.x - transformComponent.x) < nearby_distance;
+              const YInRange =
+                Math.abs(transform.y - transformComponent.y) < nearby_distance;
+              return XInRange && YInRange;
+            })
+            .map(entry => {
+              const entity = entry[0];
+              return entity;
+            });
+
+          console.log('Nearby: ' + nearbyEntities);
+        }
 
         const metadata = this.componentManager.get({
           entity: entity,

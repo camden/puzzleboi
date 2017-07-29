@@ -82,7 +82,14 @@ export default class extends Phaser.State {
         new Turn({ speed: 10 }),
         new Transform({ x: 2, y: 4 }),
         new Renderable({ glyph: 'S' }),
-        new Actor(),
+        new Actor({
+          // TODO make these classes, not strings
+          tactics: {
+            flee_from_player: {
+              distance: 5,
+            },
+          },
+        }),
         new Metadata({
           name: 'Skeleton',
           description: 'A spooky boneman',
