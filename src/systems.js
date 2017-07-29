@@ -3,9 +3,10 @@ import { Graph, astar as AStar } from 'javascript-astar';
 import { keyMap, getCommand } from 'input';
 import type { Entity } from 'entity';
 import {
-  Player,
-  Metadata,
   Actor,
+  Collidable,
+  Metadata,
+  Player,
   Renderable,
   Transform,
   Turn,
@@ -73,8 +74,8 @@ export class AISystem implements System {
                 return XInRange && YInRange;
               })
               .map(entry => {
-                const entity = entry[0];
-                return entity;
+                const transformEntity = entry[0];
+                return transformEntity;
               })
               .filter(entity => {
                 // TODO For now, do it like this
@@ -97,11 +98,57 @@ export class AISystem implements System {
 
               if (targetTransform) {
                 // now path towards target
+                // TODO add a method to get all entities that have
+                // all components in passed-in array
+                // (in this case, Collidable and Transform)
+                const collidableEntities = Array.from(
+                  this.componentManager.getAll({
+                    component: Collidable,
+                  })
+                ).map(entry => entry[0]);
+
+                const allTransformsThatAreCollidable = Array.from(
+                  this.componentManager.getAll({
+                    component: Transform,
+                  })
+                )
+                  .filter(entry => {
+                    const transformEntity = entry[0];
+                    const transform = entry[1];
+                    return (
+                      transformEntity !== entity &&
+                      transform.x !== targetTransform.x &&
+                      transform.y !== targetTransform.y
+                    );
+                  })
+                  .filter(entry => {
+                    const transformEntity = entry[0];
+                    return collidableEntities.includes(transformEntity);
+                  })
+                  .map(entry => {
+                    const renderable = this.componentManager.get({
+                      entity: entry[0],
+                      component: Renderable,
+                    });
+                    renderable.glyph = '!';
+                    return entry;
+                  })
+                  .map(entry => entry[1]);
+
                 const mapArray = new Array(MapConfig.width);
                 for (let x = 0; x < MapConfig.width; x++) {
                   mapArray[x] = [];
                   for (let y = 0; y < MapConfig.height; y++) {
-                    mapArray[x][y] = 1;
+                    let gridNode = 1;
+                    const collidableExists = allTransformsThatAreCollidable.find(
+                      transform => {
+                        return transform.x === x && transform.y === y;
+                      }
+                    );
+                    if (collidableExists) {
+                      gridNode = 0;
+                    }
+                    mapArray[x][y] = gridNode;
                   }
                 }
 
@@ -113,6 +160,13 @@ export class AISystem implements System {
                 const startPoint = graph.grid[startX][startY];
                 const goalPoint = graph.grid[goalX][goalY];
                 const path = AStar.search(graph, startPoint, goalPoint);
+
+                if (path[0]) {
+                  transformComponent.x = path[0].x;
+                  transformComponent.y = path[0].y;
+                } else {
+                  console.log('COULD NOT FIND PATH');
+                }
               }
             }
           }

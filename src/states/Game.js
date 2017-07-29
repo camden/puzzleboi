@@ -80,13 +80,13 @@ export default class extends Phaser.State {
       components: [
         new Collidable(),
         new Turn({ speed: 10 }),
-        new Transform({ x: 2, y: 4 }),
+        new Transform({ x: 6, y: 4 }),
         new Renderable({ glyph: 'S' }),
         new Actor({
           // TODO make these classes, not strings
           tactics: {
             move_towards_player: {
-              sight: 5,
+              sight: 15,
             },
           },
         }),
