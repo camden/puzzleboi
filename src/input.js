@@ -1,9 +1,5 @@
 // @flow
-import Phaser from 'phaser';
-
 import { Command, MoveCommand, ConsoleCommand, NoOpCommand } from 'command';
-
-const key = Phaser.KeyCode;
 
 const commandMap = {
   MOVE_DOWN: new MoveCommand('down'),
@@ -13,16 +9,16 @@ const commandMap = {
 };
 
 export const keyMap: Map<KeyCode, string> = new Map();
-keyMap.set(key.J, 'MOVE_DOWN');
-keyMap.set(key.K, 'MOVE_UP');
-keyMap.set(key.H, 'MOVE_LEFT');
-keyMap.set(key.L, 'MOVE_RIGHT');
-keyMap.set(key.DOWN, 'MOVE_DOWN');
-keyMap.set(key.UP, 'MOVE_UP');
-keyMap.set(key.LEFT, 'MOVE_LEFT');
-keyMap.set(key.RIGHT, 'MOVE_RIGHT');
+keyMap.set('j', 'MOVE_DOWN');
+keyMap.set('k', 'MOVE_UP');
+keyMap.set('h', 'MOVE_LEFT');
+keyMap.set('l', 'MOVE_RIGHT');
+keyMap.set('ArrowDown', 'MOVE_DOWN');
+keyMap.set('ArrowUp', 'MOVE_UP');
+keyMap.set('ArrowLeft', 'MOVE_LEFT');
+keyMap.set('ArrowRight', 'MOVE_RIGHT');
 
-export const getCommand = (key: Phaser.KeyCode): Command => {
+export const getCommand = (key: KeyCode): Command => {
   const commandString: ?string = keyMap.get(key);
 
   if (commandString) {
@@ -36,9 +32,7 @@ export const getCommand = (key: Phaser.KeyCode): Command => {
   }
 };
 
-export const onKeyPress = (event, componentManager) => {
-  // Force the uppercase letter
-  const keyCode = event.key.toUpperCase().charCodeAt(0);
-  const command = getCommand(keyCode);
+export const onKeyEvent = (event, componentManager) => {
+  const command = getCommand(event.key);
   command.execute(componentManager);
 };

@@ -12,7 +12,7 @@ import {
   Renderable,
   Actor,
 } from 'component';
-import { onKeyPress } from 'input';
+import { onKeyEvent } from 'input';
 import ComponentManager from 'component-manager';
 import ROT from '../../vendor/rot.min.js';
 import MapConfig from 'config/map.json';
@@ -127,9 +127,9 @@ export default class extends Phaser.State {
     this.game.time.advancedTiming = true;
 
     window.addEventListener(
-      'keypress',
+      'keydown',
       event => {
-        onKeyPress(event, this.componentManager);
+        onKeyEvent(event, this.componentManager);
       },
       false
     );

@@ -1,1 +1,1 @@
-declare type KeyCode = number;
+declare type KeyCode = string;
