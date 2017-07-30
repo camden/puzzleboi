@@ -1,5 +1,4 @@
 // @flow
-import { Graph, astar as AStar } from 'javascript-astar';
 import { keyMap, getCommand } from 'input';
 import type { Entity } from 'entity';
 import {
@@ -14,7 +13,7 @@ import {
 import ComponentManager from 'component-manager';
 import MapConfig from 'config/map.json';
 // TODO should this belong in utils?
-import { getEntitiesWithin } from 'utils';
+import { getEntitiesWithin, getPathToTarget } from 'utils';
 
 export interface System {
   update(entities: Array<Entity>): void,
@@ -83,73 +82,15 @@ export class AISystem implements System {
               });
 
               if (targetTransform) {
-                // now path towards target
-                // TODO add a method to get all entities that have
-                // all components in passed-in array
-                // (in this case, Collidable and Transform)
-                const collidableEntities = Array.from(
-                  this.componentManager.getAll({
-                    component: Collidable,
-                  })
-                ).map(entry => entry[0]);
-
-                const allTransformsThatAreCollidable = Array.from(
-                  this.componentManager.getAll({
-                    component: Transform,
-                  })
-                )
-                  .filter(entry => {
-                    // Don't included transforms for the target
-                    const transformEntity = entry[0];
-                    const transform = entry[1];
-                    return !(
-                      transform.x === targetTransform.x &&
-                      transform.y === targetTransform.y
-                    );
-                  })
-                  .filter(entry => {
-                    const transformEntity = entry[0];
-                    return collidableEntities.includes(transformEntity);
-                  })
-                  .map(entry => entry[1]);
-
-                const mapArray = new Array(MapConfig.width);
-                for (let x = 0; x < MapConfig.width; x++) {
-                  mapArray[x] = [];
-                  for (let y = 0; y < MapConfig.height; y++) {
-                    let gridNode = 1;
-                    const collidableExists = allTransformsThatAreCollidable.find(
-                      transform => {
-                        return transform.x === x && transform.y === y;
-                      }
-                    );
-                    if (collidableExists) {
-                      gridNode = 0;
-                    }
-                    mapArray[x][y] = gridNode;
-                  }
-                }
-
-                const graph = new Graph(mapArray);
-                const startX = transformComponent.x;
-                const startY = transformComponent.y;
-                const goalX = targetTransform.x;
-                const goalY = targetTransform.y;
-                const startPoint = graph.grid[startX][startY];
-                const goalPoint = graph.grid[goalX][goalY];
-                const path = AStar.search(graph, startPoint, goalPoint);
+                const path = getPathToTarget({
+                  componentManager: this.componentManager,
+                  transform: transformComponent,
+                  targetTransform: targetTransform,
+                });
 
                 if (path[0]) {
                   transformComponent.x = path[0].x;
                   transformComponent.y = path[0].y;
-
-                  const collidableExists = allTransformsThatAreCollidable.find(
-                    transform => {
-                      return (
-                        transform.x === path[0].x && transform.y === path[0].y
-                      );
-                    }
-                  );
                 } else {
                   console.log('COULD NOT FIND PATH');
                 }

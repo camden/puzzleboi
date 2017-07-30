@@ -1,8 +1,10 @@
 // @flow
 
+import { Graph, astar as AStar } from 'javascript-astar';
 import type { Entity } from 'entity';
-import { Component, Transform } from 'component';
+import { Collidable, Component, Transform } from 'component';
 import ComponentManager from 'component-manager';
+import MapConfig from 'config/map.json';
 
 export const getEntitiesWithin = ({
   componentManager,
@@ -12,7 +14,7 @@ export const getEntitiesWithin = ({
   componentManager: ComponentManager,
   transform: Transform,
   distance: number,
-}) => {
+}): Array<Entity> => {
   const nearbyEntities = Array.from(
     componentManager.getAll({
       component: Transform,
@@ -31,6 +33,68 @@ export const getEntitiesWithin = ({
     });
 
   return nearbyEntities;
+};
+
+export const getPathToTarget = ({
+  componentManager,
+  transform,
+  targetTransform,
+}: {
+  componentManager: ComponentManager,
+  transform: Transform,
+  targetTransform: Transform,
+}): Array<*> => {
+  const collidableEntities = Array.from(
+    componentManager.getAll({
+      component: Collidable,
+    })
+  ).map(entry => entry[0]);
+
+  const allTransformsThatAreCollidable = Array.from(
+    componentManager.getAll({
+      component: Transform,
+    })
+  )
+    .filter(entry => {
+      // Don't included transforms for the target
+      const transform: Transform = entry[1];
+      return !(
+        transform.x === targetTransform.x && transform.y === targetTransform.y
+      );
+    })
+    .filter(entry => {
+      const transformEntity = entry[0];
+      return collidableEntities.includes(transformEntity);
+    })
+    .map(entry => entry[1]);
+
+  const mapArray = new Array(MapConfig.width);
+  for (let x = 0; x < MapConfig.width; x++) {
+    mapArray[x] = [];
+    for (let y = 0; y < MapConfig.height; y++) {
+      let gridNode = 1;
+      const collidableExists = allTransformsThatAreCollidable.find(
+        (transform: Transform) => {
+          return transform.x === x && transform.y === y;
+        }
+      );
+      if (collidableExists) {
+        gridNode = 0;
+      }
+      mapArray[x][y] = gridNode;
+    }
+  }
+
+  const graph = new Graph(mapArray);
+  const startX = transform.x;
+  const startY = transform.y;
+  const goalX = targetTransform.x;
+  const goalY = targetTransform.y;
+  const startPoint = graph.grid[startX][startY];
+  const goalPoint = graph.grid[goalX][goalY];
+  const path = AStar.search(graph, startPoint, goalPoint);
+
+  return path;
 };
 
 export const getEntitiesAtPosition = ({
