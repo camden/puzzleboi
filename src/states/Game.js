@@ -50,7 +50,7 @@ export default class extends Phaser.State {
     this.entities = [];
 
     const rm = new ROT.Map.Cellular(MapConfig.width, MapConfig.height);
-    rm.randomize(0.4);
+    rm.randomize(0.5);
 
     let nextEntity = 3;
 
@@ -86,7 +86,7 @@ export default class extends Phaser.State {
           // TODO make these classes, not strings
           tactics: {
             move_towards_player: {
-              sight: 100,
+              sight: 10,
             },
           },
         }),

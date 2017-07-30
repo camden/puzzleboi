@@ -4,6 +4,35 @@ import type { Entity } from 'entity';
 import { Component, Transform } from 'component';
 import ComponentManager from 'component-manager';
 
+export const getEntitiesWithin = ({
+  componentManager,
+  transform,
+  distance,
+}: {
+  componentManager: ComponentManager,
+  transform: Transform,
+  distance: number,
+}) => {
+  const nearbyEntities = Array.from(
+    componentManager.getAll({
+      component: Transform,
+    })
+  )
+    .filter(entry => {
+      const entityTransform: Transform = entry[1];
+
+      const XInRange = Math.abs(entityTransform.x - transform.x) < distance;
+      const YInRange = Math.abs(entityTransform.y - transform.y) < distance;
+      return XInRange && YInRange;
+    })
+    .map(entry => {
+      const transformEntity = entry[0];
+      return transformEntity;
+    });
+
+  return nearbyEntities;
+};
+
 export const getEntitiesAtPosition = ({
   componentManager,
   x,

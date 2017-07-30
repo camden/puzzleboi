@@ -13,6 +13,8 @@ import {
 } from 'component';
 import ComponentManager from 'component-manager';
 import MapConfig from 'config/map.json';
+// TODO should this belong in utils?
+import { getEntitiesWithin } from 'utils';
 
 export interface System {
   update(entities: Array<Entity>): void,
@@ -57,37 +59,21 @@ export class AISystem implements System {
             const nearby_distance =
               actorComponent.tactics.move_towards_player.sight;
 
-            const nearbyEntities = Array.from(
-              this.componentManager.getAll({
-                component: Transform,
-              })
-            )
-              .filter(entry => {
-                const transform = entry[1];
-
-                const XInRange =
-                  Math.abs(transform.x - transformComponent.x) <
-                  nearby_distance;
-                const YInRange =
-                  Math.abs(transform.y - transformComponent.y) <
-                  nearby_distance;
-                return XInRange && YInRange;
-              })
-              .map(entry => {
-                const transformEntity = entry[0];
-                return transformEntity;
-              })
-              .filter(entity => {
-                // TODO For now, do it like this
-                // in the future, add a "hostility" to dynamically determine
-                // what entity you are targeting
-                const entityPlayerComponent = this.componentManager.get({
-                  entity: entity,
-                  component: Player,
-                });
-
-                return !!entityPlayerComponent;
+            const nearbyEntities = getEntitiesWithin({
+              componentManager: this.componentManager,
+              transform: transformComponent,
+              distance: nearby_distance,
+            }).filter(entity => {
+              // TODO For now, do it like this
+              // in the future, add a "hostility" to dynamically determine
+              // what entity you are targeting
+              const entityPlayerComponent = this.componentManager.get({
+                entity: entity,
+                component: Player,
               });
+
+              return !!entityPlayerComponent;
+            });
 
             const target = nearbyEntities[0];
             if (target) {
