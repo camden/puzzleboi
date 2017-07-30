@@ -113,25 +113,17 @@ export class AISystem implements System {
                   })
                 )
                   .filter(entry => {
+                    // Don't included transforms for the target
                     const transformEntity = entry[0];
                     const transform = entry[1];
-                    return (
-                      transformEntity !== entity &&
-                      transform.x !== targetTransform.x &&
-                      transform.y !== targetTransform.y
+                    return !(
+                      transform.x === targetTransform.x &&
+                      transform.y === targetTransform.y
                     );
                   })
                   .filter(entry => {
                     const transformEntity = entry[0];
                     return collidableEntities.includes(transformEntity);
-                  })
-                  .map(entry => {
-                    const renderable = this.componentManager.get({
-                      entity: entry[0],
-                      component: Renderable,
-                    });
-                    renderable.glyph = '!';
-                    return entry;
                   })
                   .map(entry => entry[1]);
 
@@ -164,6 +156,14 @@ export class AISystem implements System {
                 if (path[0]) {
                   transformComponent.x = path[0].x;
                   transformComponent.y = path[0].y;
+
+                  const collidableExists = allTransformsThatAreCollidable.find(
+                    transform => {
+                      return (
+                        transform.x === path[0].x && transform.y === path[0].y
+                      );
+                    }
+                  );
                 } else {
                   console.log('COULD NOT FIND PATH');
                 }

@@ -86,7 +86,7 @@ export default class extends Phaser.State {
           // TODO make these classes, not strings
           tactics: {
             move_towards_player: {
-              sight: 15,
+              sight: 100,
             },
           },
         }),
