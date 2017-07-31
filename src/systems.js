@@ -32,14 +32,14 @@ export class AISystem implements System {
   update(entities: Array<Entity>) {
     // TODO In the future, do this:
     // https://github.com/libgdx/ashley/wiki/How-to-use-Ashley#entity-systems
-    for (let entity of entities) {
+    for (let myEntity of entities) {
       // TODO pull this out
       const turnComponent = this.componentManager.get({
-        entity: entity,
+        entity: myEntity,
         component: Turn,
       });
       const actorComponent = this.componentManager.get({
-        entity: entity,
+        entity: myEntity,
         component: Actor,
       });
 
@@ -49,7 +49,7 @@ export class AISystem implements System {
         }
 
         const transformComponent = this.componentManager.get({
-          entity: entity,
+          entity: myEntity,
           component: Transform,
         });
 
@@ -106,6 +106,13 @@ export class AISystem implements System {
               }
               case 'wander': {
                 console.log("I'm wandering!");
+                const myTransform = this.componentManager.get({
+                  entity: myEntity,
+                  component: Transform,
+                });
+                // Pick a new location
+
+                // Can I move there?
                 acted = true;
                 break;
               }
@@ -124,7 +131,7 @@ export class AISystem implements System {
         }
 
         const metadata = this.componentManager.get({
-          entity: entity,
+          entity: myEntity,
           component: Metadata,
         });
 
@@ -152,10 +159,10 @@ export class TurnSystem implements System {
     // https://github.com/libgdx/ashley/wiki/How-to-use-Ashley#entity-systems
     let nextToAct: Turn;
 
-    for (let entity of entities) {
+    for (let myEntity of entities) {
       // TODO pull this out
       const turnComponent = this.componentManager.get({
-        entity: entity,
+        entity: myEntity,
         component: Turn,
       });
 
@@ -163,7 +170,7 @@ export class TurnSystem implements System {
         if (turnComponent.myTurn) {
           // TODO Add helper for getting name
           const metadata = this.componentManager.get({
-            entity: entity,
+            entity: myEntity,
             component: Metadata,
           });
 
@@ -253,13 +260,13 @@ export class RenderSystem implements System {
 
   update(entities: Array<Entity>) {
     this.clear();
-    for (let entity of entities) {
+    for (let myEntity of entities) {
       const renderable = this.componentManager.get({
-        entity: entity,
+        entity: myEntity,
         component: Renderable,
       });
       const transform = this.componentManager.get({
-        entity: entity,
+        entity: myEntity,
         component: Transform,
       });
 
