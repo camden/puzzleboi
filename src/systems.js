@@ -105,6 +105,7 @@ export class AISystem implements System {
                 break;
               }
               case 'wander': {
+                console.log("I'm wandering!");
                 acted = true;
                 break;
               }
@@ -116,6 +117,8 @@ export class AISystem implements System {
 
             if (acted) {
               turnComponent.myTurn = true;
+              // Stop looking for new tactics
+              break;
             }
           }
         }
