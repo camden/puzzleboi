@@ -79,16 +79,23 @@ export default class extends Phaser.State {
       entity: enemyEntity,
       components: [
         new Collidable(),
-        new Turn({ speed: 10 }),
+        new Turn({ recharge_time: 12 }),
         new Transform({ x: 6, y: 4 }),
         new Renderable({ glyph: 'S' }),
         new Actor({
           // TODO make these classes, not strings
-          tactics: {
-            move_towards_player: {
-              sight: 10,
+          tactics: [
+            {
+              name: 'move_towards_player',
+              params: {
+                sight: 10,
+              },
             },
-          },
+            {
+              name: 'wander',
+              params: {},
+            },
+          ],
         }),
         new Metadata({
           name: 'Skeleton',
@@ -105,7 +112,7 @@ export default class extends Phaser.State {
       components: [
         new Collidable(),
         new Player(),
-        new Turn({ speed: 10 }),
+        new Turn({ recharge_time: 10 }),
         new Transform({ x: 1, y: 4 }),
         new Renderable({ glyph: '@' }),
         new Metadata({

@@ -57,14 +57,14 @@ export class Actor extends Component {
 export class Player extends Component {}
 
 export class Turn extends Component {
-  speed: number;
+  recharge_time: number;
   nextTurnTime: number;
   myTurn: boolean;
 
-  constructor({ speed }: { speed: number }) {
+  constructor({ recharge_time }: { recharge_time: number }) {
     super();
     this.myTurn = false;
-    this.speed = speed;
-    this.nextTurnTime = speed;
+    this.recharge_time = recharge_time;
+    this.nextTurnTime = recharge_time;
   }
 }

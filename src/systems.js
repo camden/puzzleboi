@@ -54,47 +54,68 @@ export class AISystem implements System {
         });
 
         if (transformComponent) {
-          if (actorComponent.tactics.move_towards_player) {
-            const nearby_distance =
-              actorComponent.tactics.move_towards_player.sight;
+          for (let tactic of actorComponent.tactics) {
+            if (!tactic.name) {
+              throw new Error('Every tactic must have a name!');
+            }
 
-            const nearbyEntities = getEntitiesWithin({
-              componentManager: this.componentManager,
-              transform: transformComponent,
-              distance: nearby_distance,
-            }).filter(entity => {
-              // TODO For now, do it like this
-              // in the future, add a "hostility" to dynamically determine
-              // what entity you are targeting
-              const entityPlayerComponent = this.componentManager.get({
-                entity: entity,
-                component: Player,
-              });
-
-              return !!entityPlayerComponent;
-            });
-
-            const target = nearbyEntities[0];
-            if (target) {
-              const targetTransform = this.componentManager.get({
-                entity: target,
-                component: Transform,
-              });
-
-              if (targetTransform) {
-                const path = getPathToTarget({
+            let acted = false;
+            switch (tactic.name) {
+              case 'move_towards_player': {
+                const nearby_distance = tactic.params.sight;
+                const nearbyEntities = getEntitiesWithin({
                   componentManager: this.componentManager,
                   transform: transformComponent,
-                  targetTransform: targetTransform,
+                  distance: nearby_distance,
+                }).filter(entity => {
+                  // TODO For now, do it like this
+                  // in the future, add a "hostility" to dynamically determine
+                  // what entity you are targeting
+                  const entityPlayerComponent = this.componentManager.get({
+                    entity: entity,
+                    component: Player,
+                  });
+
+                  return !!entityPlayerComponent;
                 });
 
-                if (path[0]) {
-                  transformComponent.x = path[0].x;
-                  transformComponent.y = path[0].y;
-                } else {
-                  console.log('COULD NOT FIND PATH');
+                const target = nearbyEntities[0];
+                if (target) {
+                  const targetTransform = this.componentManager.get({
+                    entity: target,
+                    component: Transform,
+                  });
+
+                  if (targetTransform) {
+                    const path = getPathToTarget({
+                      componentManager: this.componentManager,
+                      transform: transformComponent,
+                      targetTransform: targetTransform,
+                    });
+
+                    if (path[0]) {
+                      transformComponent.x = path[0].x;
+                      transformComponent.y = path[0].y;
+                      acted = true;
+                    } else {
+                      console.log('COULD NOT FIND PATH');
+                    }
+                  }
                 }
+                break;
               }
+              case 'wander': {
+                acted = true;
+                break;
+              }
+              default: {
+                acted = true;
+                break;
+              }
+            }
+
+            if (acted) {
+              turnComponent.myTurn = true;
             }
           }
         }
@@ -164,7 +185,7 @@ export class TurnSystem implements System {
     }
 
     nextToAct.myTurn = true;
-    nextToAct.nextTurnTime += nextToAct.speed;
+    nextToAct.nextTurnTime += nextToAct.recharge_time;
   }
 }
 
