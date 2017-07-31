@@ -1,5 +1,6 @@
 // @flow
 import Phaser from 'phaser';
+import seedrandom from 'seedrandom';
 
 import { TurnSystem, AISystem, RenderSystem, System } from 'systems';
 import type { Entity } from 'entity';
@@ -30,6 +31,11 @@ export default class extends Phaser.State {
   preload() {}
 
   create() {
+    // Set the random seed
+    const seed = 40;
+    seedrandom(seed, { global: true });
+    ROT.RNG.setSeed(seed);
+
     this.engine = {};
 
     this.engine.log = ['log initialized'];
@@ -50,7 +56,7 @@ export default class extends Phaser.State {
     this.entities = [];
 
     const rm = new ROT.Map.Cellular(MapConfig.width, MapConfig.height);
-    rm.randomize(0.5);
+    rm.randomize(0.4);
 
     let nextEntity = 3;
 

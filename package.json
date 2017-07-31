@@ -45,6 +45,7 @@
   "dependencies": {
     "javascript-astar": "^0.4.1",
     "phaser-ce": "^2.8.0",
+    "seedrandom": "^2.4.3",
     "webfontloader": "^1.6.28"
   }
 }
