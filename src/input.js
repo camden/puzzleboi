@@ -1,5 +1,9 @@
 // @flow
+import Phaser from 'phaser';
+
 import { Command, MoveCommand, WaitCommand, NoOpCommand } from 'command';
+
+const key = Phaser.KeyCode;
 
 const commandMap = {
   MOVE_DOWN: new MoveCommand('down'),
@@ -10,15 +14,15 @@ const commandMap = {
 };
 
 export const keyMap: Map<KeyCode, string> = new Map();
-keyMap.set('j', 'MOVE_DOWN');
-keyMap.set('k', 'MOVE_UP');
-keyMap.set('h', 'MOVE_LEFT');
-keyMap.set('l', 'MOVE_RIGHT');
-keyMap.set('ArrowDown', 'MOVE_DOWN');
-keyMap.set('ArrowUp', 'MOVE_UP');
-keyMap.set('ArrowLeft', 'MOVE_LEFT');
-keyMap.set('ArrowRight', 'MOVE_RIGHT');
-keyMap.set('.', 'WAIT');
+keyMap.set(key.J, 'MOVE_DOWN');
+keyMap.set(key.K, 'MOVE_UP');
+keyMap.set(key.H, 'MOVE_LEFT');
+keyMap.set(key.L, 'MOVE_RIGHT');
+keyMap.set(key.DOWN, 'MOVE_DOWN');
+keyMap.set(key.UP, 'MOVE_UP');
+keyMap.set(key.LEFT, 'MOVE_LEFT');
+keyMap.set(key.RIGHT, 'MOVE_RIGHT');
+keyMap.set(key.PERIOD, 'WAIT');
 
 export const getCommand = (key: KeyCode): Command => {
   const commandString: ?string = keyMap.get(key);
@@ -35,6 +39,6 @@ export const getCommand = (key: KeyCode): Command => {
 };
 
 export const onKeyEvent = (event, componentManager) => {
-  const command = getCommand(event.key);
+  const command = getCommand(event.keyCode);
   command.execute(componentManager);
 };
