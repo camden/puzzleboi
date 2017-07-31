@@ -1,11 +1,12 @@
 // @flow
-import { Command, MoveCommand, ConsoleCommand, NoOpCommand } from 'command';
+import { Command, MoveCommand, WaitCommand, NoOpCommand } from 'command';
 
 const commandMap = {
   MOVE_DOWN: new MoveCommand('down'),
   MOVE_UP: new MoveCommand('up'),
   MOVE_LEFT: new MoveCommand('left'),
   MOVE_RIGHT: new MoveCommand('right'),
+  WAIT: new WaitCommand(),
 };
 
 export const keyMap: Map<KeyCode, string> = new Map();
@@ -17,6 +18,7 @@ keyMap.set('ArrowDown', 'MOVE_DOWN');
 keyMap.set('ArrowUp', 'MOVE_UP');
 keyMap.set('ArrowLeft', 'MOVE_LEFT');
 keyMap.set('ArrowRight', 'MOVE_RIGHT');
+keyMap.set('.', 'WAIT');
 
 export const getCommand = (key: KeyCode): Command => {
   const commandString: ?string = keyMap.get(key);

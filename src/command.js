@@ -26,6 +26,29 @@ export class ConsoleCommand implements Command {
   }
 }
 
+export class WaitCommand implements Command {
+  execute(componentManager: ComponentManager) {
+    const playerComponents = componentManager.getAll({
+      component: Player,
+    });
+
+    playerComponents.forEach((playerComponent, entity) => {
+      let turnComponent = componentManager.get({
+        entity: entity,
+        component: Turn,
+      });
+
+      if (!turnComponent) {
+        return;
+      }
+
+      if (turnComponent.myTurn) {
+        console.log('Player is waiting...');
+        turnComponent.myTurn = false;
+      }
+    });
+  }
+}
 export class MoveCommand implements Command {
   direction: string;
 
