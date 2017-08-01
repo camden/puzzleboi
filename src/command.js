@@ -34,6 +34,10 @@ export class ConsoleCommand implements Command {
   }
 }
 
+export class LookCommand implements Command {
+  execute(componentManager: ComponentManager) {}
+}
+
 export class WaitCommand implements Command {
   execute(componentManager: ComponentManager) {
     const playerComponents = componentManager.getAll({
@@ -80,13 +84,15 @@ export class MoveCommand implements Command {
         component: Turn,
       });
 
-      if (!turnComponent || !transform) {
+      if (!transform) {
         return;
       }
 
-      if (!turnComponent.myTurn) {
+      if (turnComponent && !turnComponent.myTurn) {
         return;
       }
+
+      let acted = false;
 
       let x_delta = 0;
       let y_delta = 0;
@@ -188,7 +194,7 @@ export class MoveCommand implements Command {
                 components: [new Attacked({ by: myEntity })],
               });
 
-              turnComponent.myTurn = false;
+              acted = true;
             }
           }
           return anyEntitiesOnTile || collidableHere;
@@ -204,7 +210,11 @@ export class MoveCommand implements Command {
       transform.x = next_x;
       transform.y = next_y;
 
-      turnComponent.myTurn = false;
+      acted = true;
+
+      if (turnComponent) {
+        turnComponent.myTurn = !acted;
+      }
     });
   }
 }

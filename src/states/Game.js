@@ -147,8 +147,7 @@ export default class extends Phaser.State {
     this.componentManager.add({
       entity: cursorEntity,
       components: [
-        // new PlayerControlled(),
-        // new Turn({ recharge_time: 0 }),
+        new PlayerControlled(),
         new Transform({ x: 1, y: 1 }),
         new Renderable({ glyph: 'X', visible: true }),
       ],
