@@ -88,7 +88,7 @@ export const getPathToTarget = ({
     }
   }
 
-  const graph = new Graph(mapArray);
+  const graph = new Graph(mapArray, { diagonal: true });
   const startX = transform.x;
   const startY = transform.y;
   const goalX = targetTransform.x;
