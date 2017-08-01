@@ -3,13 +3,15 @@ import Phaser from 'phaser';
 import seedrandom from 'seedrandom';
 
 import { System } from 'systems/system';
-import TurnSystem from 'systems/TurnSystem';
 import AISystem from 'systems/AISystem';
+import AttackedSystem from 'systems/AttackedSystem';
 import RenderSystem from 'systems/RenderSystem';
+import TurnSystem from 'systems/TurnSystem';
 import type { Entity } from 'entity';
 import {
   Actor,
   Attackable,
+  Attacked,
   Collidable,
   Metadata,
   Player,
@@ -48,6 +50,7 @@ export default class extends Phaser.State {
     this.componentManager.register({
       components: [
         Actor,
+        Attacked,
         Attackable,
         Collidable,
         Metadata,
@@ -162,9 +165,11 @@ export default class extends Phaser.State {
 
     systems.render.push(new RenderSystem(this.componentManager, this.game));
 
+    // This ordering is very important!
     systems.update.push(
       new TurnSystem(this.componentManager, this.game),
-      new AISystem(this.componentManager, this.game)
+      new AISystem(this.componentManager, this.game),
+      new AttackedSystem(this.componentManager, this.game)
     );
 
     return systems;

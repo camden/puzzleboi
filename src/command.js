@@ -3,6 +3,7 @@ import type { Entity } from 'entity';
 import ComponentManager from 'component-manager';
 import {
   Attackable,
+  Attacked,
   Collidable,
   Metadata,
   Player,
@@ -39,9 +40,9 @@ export class WaitCommand implements Command {
       component: Player,
     });
 
-    playerComponents.forEach((playerComponent, entity) => {
+    playerComponents.forEach((playerComponent, myEntity) => {
       let turnComponent = componentManager.get({
-        entity: entity,
+        entity: myEntity,
         component: Turn,
       });
 
@@ -68,14 +69,14 @@ export class MoveCommand implements Command {
       component: Player,
     });
 
-    playerComponents.forEach((playerComponent, entity) => {
+    playerComponents.forEach((playerComponent, myEntity) => {
       let transform = componentManager.get({
-        entity: entity,
+        entity: myEntity,
         component: Transform,
       });
 
       let turnComponent = componentManager.get({
-        entity: entity,
+        entity: myEntity,
         component: Turn,
       });
 
@@ -133,7 +134,7 @@ export class MoveCommand implements Command {
 
       const collidablesOnNextTile = entities_on_tile.reduce(
         (anyEntitiesOnTile, entityOnTile) => {
-          if (entityOnTile === entity) {
+          if (entityOnTile === myEntity) {
             return anyEntitiesOnTile;
           }
           // Here is where you would dispatch a specific "collision" event!!
@@ -153,7 +154,7 @@ export class MoveCommand implements Command {
               entityOnTileName = entityOnTileMetadata.name;
             }
             const currentEntityName = componentManager.get({
-              entity: entity,
+              entity: myEntity,
               component: Metadata,
             }).name;
             console.log(
@@ -166,9 +167,13 @@ export class MoveCommand implements Command {
             });
 
             if (entityOnTileAttackable) {
-              console.log(
-                `${currentEntityName} attacking ${entityOnTileName}!`
-              );
+              componentManager.add({
+                entity: entityOnTile,
+                components: [new Attacked({ by: myEntity })],
+              });
+
+              turnComponent.myTurn = false;
+              return;
             }
           }
           return anyEntitiesOnTile || collidableHere;

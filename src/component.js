@@ -1,8 +1,20 @@
 // @flow
 
+import type { Entity } from 'entity';
+
 export class Component {}
 
 export class Attackable extends Component {}
+
+export class Attacked extends Component {
+  by: Entity;
+
+  constructor({ by }: { by: Entity }) {
+    super();
+
+    this.by = by;
+  }
+}
 
 export class Renderable extends Component {
   glyph: string;
