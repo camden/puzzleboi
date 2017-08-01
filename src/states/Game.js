@@ -8,13 +8,14 @@ import AISystem from 'systems/AISystem';
 import RenderSystem from 'systems/RenderSystem';
 import type { Entity } from 'entity';
 import {
-  Metadata,
+  Actor,
+  Attackable,
   Collidable,
-  Turn,
-  Transform,
+  Metadata,
   Player,
   Renderable,
-  Actor,
+  Transform,
+  Turn,
 } from 'component';
 import { onKeyEvent } from 'input';
 import ComponentManager from 'component-manager';
@@ -47,12 +48,13 @@ export default class extends Phaser.State {
     this.componentManager.register({
       components: [
         Actor,
+        Attackable,
+        Collidable,
         Metadata,
         Player,
-        Turn,
-        Collidable,
-        Transform,
         Renderable,
+        Transform,
+        Turn,
       ],
     });
 
@@ -87,10 +89,6 @@ export default class extends Phaser.State {
     this.componentManager.add({
       entity: enemyEntity,
       components: [
-        new Collidable(),
-        new Turn({ recharge_time: 12 }),
-        new Transform({ x: 6, y: 4 }),
-        new Renderable({ glyph: 'S' }),
         new Actor({
           // TODO make these classes, not strings
           tactics: [
@@ -106,10 +104,15 @@ export default class extends Phaser.State {
             },
           ],
         }),
+        new Attackable(),
+        new Collidable(),
         new Metadata({
           name: 'Skeleton',
           description: 'A spooky boneman',
         }),
+        new Renderable({ glyph: 'S' }),
+        new Transform({ x: 6, y: 4 }),
+        new Turn({ recharge_time: 12 }),
       ],
     });
 

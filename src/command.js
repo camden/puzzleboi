@@ -1,7 +1,14 @@
 // @flow
 import type { Entity } from 'entity';
 import ComponentManager from 'component-manager';
-import { Player, Turn, Metadata, Transform, Collidable } from 'component';
+import {
+  Attackable,
+  Collidable,
+  Metadata,
+  Player,
+  Transform,
+  Turn,
+} from 'component';
 import MapConfig from 'config/map.json';
 
 import { clamp, getEntitiesAtPosition } from 'utils';
@@ -135,6 +142,7 @@ export class MoveCommand implements Command {
             entity: entityOnTile,
             component: Collidable,
           });
+
           if (collidableHere) {
             let entityOnTileName = entityOnTile;
             let entityOnTileMetadata = componentManager.get({
@@ -151,6 +159,17 @@ export class MoveCommand implements Command {
             console.log(
               `${currentEntityName} bumped into ${entityOnTileName}.`
             );
+
+            const entityOnTileAttackable: ?Attackable = componentManager.get({
+              entity: entityOnTile,
+              component: Attackable,
+            });
+
+            if (entityOnTileAttackable) {
+              console.log(
+                `${currentEntityName} attacking ${entityOnTileName}!`
+              );
+            }
           }
           return anyEntitiesOnTile || collidableHere;
         },

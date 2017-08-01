@@ -2,6 +2,8 @@
 
 export class Component {}
 
+export class Attackable extends Component {}
+
 export class Renderable extends Component {
   glyph: string;
 
@@ -46,9 +48,9 @@ export class Metadata extends Component {
 export class Collidable extends Component {}
 
 export class Actor extends Component {
-  tactics: { [string]: any };
+  tactics: { [string]: Array<any> };
 
-  constructor({ tactics }: { tactics: { [string]: any } }) {
+  constructor({ tactics }: { tactics: { [string]: Array<any> } }) {
     super();
     this.tactics = tactics;
   }
