@@ -105,6 +105,22 @@ export class MoveCommand implements Command {
         case 'down':
           y_delta = -1;
           break;
+        case 'up-left':
+          x_delta = -1;
+          y_delta = 1;
+          break;
+        case 'up-right':
+          x_delta = 1;
+          y_delta = 1;
+          break;
+        case 'down-left':
+          x_delta = -1;
+          y_delta = -1;
+          break;
+        case 'down-right':
+          x_delta = 1;
+          y_delta = -1;
+          break;
         default:
           break;
       }
