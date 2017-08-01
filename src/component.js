@@ -18,8 +18,9 @@ export class Attacked extends Component {
 
 export class Renderable extends Component {
   glyph: string;
+  visible: boolean;
 
-  constructor({ glyph }: { glyph: string }) {
+  constructor({ glyph, visible = true }: { glyph: string, visible: boolean }) {
     super();
 
     if (glyph.length !== 1) {
@@ -27,6 +28,7 @@ export class Renderable extends Component {
     }
 
     this.glyph = glyph;
+    this.visible = visible;
   }
 }
 

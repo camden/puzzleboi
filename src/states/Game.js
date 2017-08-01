@@ -66,7 +66,7 @@ export default class extends Phaser.State {
     const rm = new ROT.Map.Cellular(MapConfig.width, MapConfig.height);
     rm.randomize(0);
 
-    let nextEntity = 3;
+    let nextEntity = 4;
 
     rm.create((x, y, createWallNumber) => {
       if (createWallNumber === 0) {
@@ -116,7 +116,7 @@ export default class extends Phaser.State {
           name: 'Skeleton',
           description: 'A spooky boneman',
         }),
-        new Renderable({ glyph: 'S' }),
+        new Renderable({ glyph: 'S', visible: true }),
         new Transform({ x: 6, y: 4 }),
         new Turn({ recharge_time: 12 }),
       ],
@@ -133,11 +133,24 @@ export default class extends Phaser.State {
         new PlayerControlled(),
         new Turn({ recharge_time: 10 }),
         new Transform({ x: 1, y: 4 }),
-        new Renderable({ glyph: '@' }),
+        new Renderable({ glyph: '@', visible: true }),
         new Metadata({
           name: 'Player (you)',
           description: 'The hero of our tale.',
         }),
+      ],
+    });
+
+    // Do this automatically
+    const cursorEntity = 3;
+    this.entities.push(cursorEntity);
+    this.componentManager.add({
+      entity: cursorEntity,
+      components: [
+        // new PlayerControlled(),
+        // new Turn({ recharge_time: 0 }),
+        new Transform({ x: 1, y: 1 }),
+        new Renderable({ glyph: 'X', visible: true }),
       ],
     });
 
