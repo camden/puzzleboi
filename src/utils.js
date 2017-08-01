@@ -22,9 +22,12 @@ export const getEntitiesWithin = ({
   )
     .filter(entry => {
       const entityTransform: Transform = entry[1];
+      if (entityTransform === transform) {
+        return false;
+      }
 
-      const XInRange = Math.abs(entityTransform.x - transform.x) < distance;
-      const YInRange = Math.abs(entityTransform.y - transform.y) < distance;
+      const XInRange = Math.abs(entityTransform.x - transform.x) <= distance;
+      const YInRange = Math.abs(entityTransform.y - transform.y) <= distance;
       return XInRange && YInRange;
     })
     .map(entry => {

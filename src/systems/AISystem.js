@@ -49,6 +49,33 @@ export default class AISystem implements System {
 
             let acted = false;
             switch (tactic.name) {
+              case 'attack_adjacent': {
+                const nearbyEntities = getEntitiesWithin({
+                  componentManager: this.componentManager,
+                  transform: transformComponent,
+                  distance: 1,
+                }).filter(entity => {
+                  // TODO For now, do it like this
+                  // in the future, add a "hostility" to dynamically determine
+                  // what entity you are targeting
+                  const entityPlayerComponent = this.componentManager.get({
+                    entity: entity,
+                    component: Player,
+                  });
+
+                  return !!entityPlayerComponent;
+                });
+
+                if (nearbyEntities.length === 0) {
+                  break;
+                }
+
+                const target = nearbyEntities[0];
+                console.log('Skeleton attacked player!');
+                acted = true;
+
+                break;
+              }
               case 'move_towards_player': {
                 const nearby_distance = tactic.params.sight;
                 const nearbyEntities = getEntitiesWithin({
@@ -106,6 +133,7 @@ export default class AISystem implements System {
               }
               default: {
                 acted = true;
+                throw new Error(`${tactic.name} not found!`);
                 break;
               }
             }

@@ -173,7 +173,6 @@ export class MoveCommand implements Command {
               });
 
               turnComponent.myTurn = false;
-              return;
             }
           }
           return anyEntitiesOnTile || collidableHere;
