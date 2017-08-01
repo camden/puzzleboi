@@ -128,6 +128,7 @@ export default class extends Phaser.State {
     this.componentManager.add({
       entity: playerEntity,
       components: [
+        new Attackable(),
         new Collidable(),
         new Player(),
         new Turn({ recharge_time: 10 }),

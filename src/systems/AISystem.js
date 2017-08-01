@@ -2,7 +2,15 @@
 
 import { System } from 'systems/system';
 import type { Entity } from 'entity';
-import { Actor, Metadata, Player, Transform, Turn } from 'component';
+import {
+  Actor,
+  Attackable,
+  Attacked,
+  Metadata,
+  Player,
+  Transform,
+  Turn,
+} from 'component';
 import ComponentManager from 'component-manager';
 
 // TODO should this belong in utils?
@@ -71,8 +79,23 @@ export default class AISystem implements System {
                 }
 
                 const target = nearbyEntities[0];
-                console.log('Skeleton attacked player!');
-                acted = true;
+
+                if (target) {
+                  const targetAttackable: ?Attackable = this.componentManager.get(
+                    {
+                      entity: target,
+                      component: Attackable,
+                    }
+                  );
+
+                  if (targetAttackable) {
+                    this.componentManager.add({
+                      entity: target,
+                      components: [new Attacked({ by: myEntity })],
+                    });
+                    acted = true;
+                  }
+                }
 
                 break;
               }
