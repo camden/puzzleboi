@@ -2,7 +2,10 @@
 import Phaser from 'phaser';
 import seedrandom from 'seedrandom';
 
-import { TurnSystem, AISystem, RenderSystem, System } from 'systems';
+import { System } from 'systems/system';
+import TurnSystem from 'systems/TurnSystem';
+import AISystem from 'systems/AISystem';
+import RenderSystem from 'systems/RenderSystem';
 import type { Entity } from 'entity';
 import {
   Metadata,
