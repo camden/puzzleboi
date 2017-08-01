@@ -68,7 +68,7 @@ export class Actor extends Component {
   }
 }
 
-export class Player extends Component {}
+export class PlayerControlled extends Component {}
 
 export class Turn extends Component {
   recharge_time: number;

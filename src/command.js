@@ -6,7 +6,7 @@ import {
   Attacked,
   Collidable,
   Metadata,
-  Player,
+  PlayerControlled,
   Transform,
   Turn,
 } from 'component';
@@ -37,7 +37,7 @@ export class ConsoleCommand implements Command {
 export class WaitCommand implements Command {
   execute(componentManager: ComponentManager) {
     const playerComponents = componentManager.getAll({
-      component: Player,
+      component: PlayerControlled,
     });
 
     playerComponents.forEach((playerComponent, myEntity) => {
@@ -66,7 +66,7 @@ export class MoveCommand implements Command {
 
   execute(componentManager: ComponentManager) {
     const playerComponents = componentManager.getAll({
-      component: Player,
+      component: PlayerControlled,
     });
 
     playerComponents.forEach((playerComponent, myEntity) => {

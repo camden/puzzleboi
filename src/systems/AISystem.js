@@ -7,7 +7,7 @@ import {
   Attackable,
   Attacked,
   Metadata,
-  Player,
+  PlayerControlled,
   Transform,
   Turn,
 } from 'component';
@@ -68,7 +68,7 @@ export default class AISystem implements System {
                   // what entity you are targeting
                   const entityPlayerComponent = this.componentManager.get({
                     entity: entity,
-                    component: Player,
+                    component: PlayerControlled,
                   });
 
                   return !!entityPlayerComponent;
@@ -111,7 +111,7 @@ export default class AISystem implements System {
                   // what entity you are targeting
                   const entityPlayerComponent = this.componentManager.get({
                     entity: entity,
-                    component: Player,
+                    component: PlayerControlled,
                   });
 
                   return !!entityPlayerComponent;
