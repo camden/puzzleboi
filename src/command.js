@@ -60,6 +60,28 @@ export class LookCommand implements Command {
       switch (state) {
         case 'PLAYING': {
           nextState = 'LOOKING';
+          const cursorTransform = componentManager.get({
+            entity: cursorEntity,
+            component: Transform,
+          });
+
+          if (!cursorTransform) {
+            throw new Error('Cursor must have Transform component.');
+          }
+
+          const playerTransform = componentManager.get({
+            entity: myEntity,
+            component: Transform,
+          });
+
+          // TODO maybe bake this into componentManager as 'required' param?
+          if (!playerTransform) {
+            throw new Error('Player must have Transform component.');
+          }
+
+          cursorTransform.x = playerTransform.x;
+          cursorTransform.y = playerTransform.y;
+
           componentManager.add({
             entity: cursorEntity,
             components: [new PlayerControlled()],
