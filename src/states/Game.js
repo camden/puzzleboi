@@ -68,7 +68,7 @@ export default class extends Phaser.State {
     this.entities = [];
 
     const rm = new ROT.Map.Cellular(MapConfig.width, MapConfig.height);
-    rm.randomize(0);
+    rm.randomize(0.4);
 
     let nextEntity = 4;
 
