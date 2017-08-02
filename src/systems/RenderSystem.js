@@ -78,7 +78,7 @@ export default class RenderSystem implements System {
       });
 
       // Eventually do a bitmask?
-      if (renderable && transform) {
+      if (renderable && renderable.visible && transform) {
         // TODO Rename this
         this.draw({
           x: transform.x,

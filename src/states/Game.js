@@ -154,7 +154,7 @@ export default class extends Phaser.State {
       components: [
         new Cursor(),
         new Transform({ x: 1, y: 1 }),
-        new Renderable({ glyph: 'X', visible: true }),
+        new Renderable({ glyph: 'X', visible: false }),
       ],
     });
 
