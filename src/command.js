@@ -9,6 +9,7 @@ import {
   Metadata,
   Player,
   PlayerControlled,
+  Renderable,
   Transform,
   Turn,
 } from 'component';
@@ -54,12 +55,21 @@ export class LookCommand implements Command {
       }
 
       const cursorEntity = cursorComponents.keys().next().value;
+      const cursorRenderable = componentManager.get({
+        entity: cursorEntity,
+        component: Renderable,
+      });
+
+      if (!cursorRenderable) {
+        throw new Error('Cursor must have Renderable component.');
+      }
 
       let state = playerComponent.state;
       let nextState: ?string;
       switch (state) {
         case 'PLAYING': {
           nextState = 'LOOKING';
+
           const cursorTransform = componentManager.get({
             entity: cursorEntity,
             component: Transform,
@@ -79,6 +89,7 @@ export class LookCommand implements Command {
             throw new Error('Player must have Transform component.');
           }
 
+          cursorRenderable.visible = true;
           cursorTransform.x = playerTransform.x;
           cursorTransform.y = playerTransform.y;
 
@@ -94,6 +105,7 @@ export class LookCommand implements Command {
         }
         case 'LOOKING': {
           nextState = 'PLAYING';
+          cursorRenderable.visible = false;
           componentManager.add({
             entity: myEntity,
             components: [new PlayerControlled()],
