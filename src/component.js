@@ -6,6 +6,18 @@ export class Component {}
 
 export class Attackable extends Component {}
 
+export class Cursor extends Component {}
+
+export class Player extends Component {
+  state: 'PLAYING' | 'LOOKING';
+
+  constructor({ state }: { state: 'PLAYING' | 'LOOKING' }) {
+    super();
+
+    this.state = state;
+  }
+}
+
 export class Attacked extends Component {
   by: Entity;
 

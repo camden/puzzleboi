@@ -13,7 +13,9 @@ import {
   Attackable,
   Attacked,
   Collidable,
+  Cursor,
   Metadata,
+  Player,
   PlayerControlled,
   Renderable,
   Transform,
@@ -53,7 +55,9 @@ export default class extends Phaser.State {
         Attacked,
         Attackable,
         Collidable,
+        Cursor,
         Metadata,
+        Player,
         PlayerControlled,
         Renderable,
         Transform,
@@ -130,6 +134,7 @@ export default class extends Phaser.State {
       components: [
         new Attackable(),
         new Collidable(),
+        new Player({ state: 'PLAYING' }),
         new PlayerControlled(),
         new Turn({ recharge_time: 10 }),
         new Transform({ x: 1, y: 4 }),
@@ -147,7 +152,7 @@ export default class extends Phaser.State {
     this.componentManager.add({
       entity: cursorEntity,
       components: [
-        new PlayerControlled(),
+        new Cursor(),
         new Transform({ x: 1, y: 1 }),
         new Renderable({ glyph: 'X', visible: true }),
       ],

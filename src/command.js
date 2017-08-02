@@ -5,7 +5,9 @@ import {
   Attackable,
   Attacked,
   Collidable,
+  Cursor,
   Metadata,
+  Player,
   PlayerControlled,
   Transform,
   Turn,
@@ -35,7 +37,59 @@ export class ConsoleCommand implements Command {
 }
 
 export class LookCommand implements Command {
-  execute(componentManager: ComponentManager) {}
+  execute(componentManager: ComponentManager) {
+    const playerComponents: Map<number, Player> = componentManager.getAll({
+      component: Player,
+    });
+
+    // TODO no need for a for-each, since there should only be one player
+    // ...right?
+    playerComponents.forEach((playerComponent: Player, myEntity) => {
+      const cursorComponents = componentManager.getAll({
+        component: Cursor,
+      });
+
+      if (!cursorComponents) {
+        throw new Error('Could not find Cursor!');
+      }
+
+      const cursorEntity = cursorComponents.keys().next().value;
+
+      let state = playerComponent.state;
+      let nextState: ?string;
+      switch (state) {
+        case 'PLAYING': {
+          nextState = 'LOOKING';
+          componentManager.add({
+            entity: cursorEntity,
+            components: [new PlayerControlled()],
+          });
+          componentManager.remove({
+            entity: myEntity,
+            component: PlayerControlled,
+          });
+          break;
+        }
+        case 'LOOKING': {
+          nextState = 'PLAYING';
+          componentManager.add({
+            entity: myEntity,
+            components: [new PlayerControlled()],
+          });
+          componentManager.remove({
+            entity: cursorEntity,
+            component: PlayerControlled,
+          });
+          break;
+        }
+        default: {
+          throw new Error(`Invalid state: ${state}`);
+        }
+      }
+      console.log('PLAYER STATE: ' + nextState);
+      playerComponent.state = nextState;
+    });
+  }
 }
 
 export class WaitCommand implements Command {

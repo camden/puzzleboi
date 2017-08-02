@@ -79,7 +79,6 @@ export default class RenderSystem implements System {
 
       // Eventually do a bitmask?
       if (renderable && transform) {
-        console.log('Rendering... ' + renderable.glyph);
         // TODO Rename this
         this.draw({
           x: transform.x,
