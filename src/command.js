@@ -208,57 +208,61 @@ export class MoveCommand implements Command {
         y: next_y,
       });
 
-      const collidablesOnNextTile = entities_on_tile.reduce(
-        (anyEntitiesOnTile, entityOnTile) => {
-          if (entityOnTile === myEntity) {
-            return anyEntitiesOnTile;
-          }
-          // Here is where you would dispatch a specific "collision" event!!
-          // TODO DO GENERICS NOT CASTING
-          const collidableHere = componentManager.has({
-            entity: entityOnTile,
-            component: Collidable,
-          });
+      const checkForCollision = !!turnComponent;
 
-          if (collidableHere) {
-            let entityOnTileName = entityOnTile;
-            let entityOnTileMetadata = componentManager.get({
-              entity: entityOnTile,
-              component: Metadata,
-            });
-            if (entityOnTileMetadata) {
-              entityOnTileName = entityOnTileMetadata.name;
+      if (checkForCollision) {
+        const collidablesOnNextTile = entities_on_tile.reduce(
+          (anyEntitiesOnTile, entityOnTile) => {
+            if (entityOnTile === myEntity) {
+              return anyEntitiesOnTile;
             }
-            const currentEntityName = componentManager.get({
-              entity: myEntity,
-              component: Metadata,
-            }).name;
-            console.log(
-              `${currentEntityName} bumped into ${entityOnTileName}.`
-            );
-
-            const entityOnTileAttackable: ?Attackable = componentManager.get({
+            // Here is where you would dispatch a specific "collision" event!!
+            // TODO DO GENERICS NOT CASTING
+            const collidableHere = componentManager.has({
               entity: entityOnTile,
-              component: Attackable,
+              component: Collidable,
             });
 
-            if (entityOnTileAttackable) {
-              componentManager.add({
+            if (collidableHere) {
+              let entityOnTileName = entityOnTile;
+              let entityOnTileMetadata = componentManager.get({
                 entity: entityOnTile,
-                components: [new Attacked({ by: myEntity })],
+                component: Metadata,
+              });
+              if (entityOnTileMetadata) {
+                entityOnTileName = entityOnTileMetadata.name;
+              }
+              const currentEntityName = componentManager.get({
+                entity: myEntity,
+                component: Metadata,
+              }).name;
+              console.log(
+                `${currentEntityName} bumped into ${entityOnTileName}.`
+              );
+
+              const entityOnTileAttackable: ?Attackable = componentManager.get({
+                entity: entityOnTile,
+                component: Attackable,
               });
 
-              acted = true;
-            }
-          }
-          return anyEntitiesOnTile || collidableHere;
-        },
-        false
-      );
+              if (entityOnTileAttackable) {
+                componentManager.add({
+                  entity: entityOnTile,
+                  components: [new Attacked({ by: myEntity })],
+                });
 
-      if (collidablesOnNextTile) {
-        // Here is where you would dispatch a generic "collision" event!!
-        return;
+                acted = true;
+              }
+            }
+            return anyEntitiesOnTile || collidableHere;
+          },
+          false
+        );
+
+        if (collidablesOnNextTile) {
+          // Here is where you would dispatch a generic "collision" event!!
+          return;
+        }
       }
 
       transform.x = next_x;
