@@ -22,6 +22,10 @@ export default class RenderSystem implements System {
     // Init map - should this be somewhere else?
     const MAP_WIDTH = MapConfig.width;
     const MAP_HEIGHT = MapConfig.height;
+    const cameraBounds = {
+      width: this.game.scale.width / MapConfig.tileSize,
+      height: 10,
+    };
     const blankChar = '·';
     // TODO this is ugly... use a camera
     const spacing = MapConfig.tileSize;
@@ -53,11 +57,11 @@ export default class RenderSystem implements System {
     };
 
     this.draw = ({ x, y, glyph }) => {
-      if (x < 0 || x >= MAP_WIDTH) {
+      if (x < 0 || x >= cameraBounds.width) {
         return;
       }
 
-      if (y < 0 || y >= MAP_HEIGHT) {
+      if (y < 0 || y >= cameraBounds.height) {
         return;
       }
 

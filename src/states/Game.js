@@ -72,6 +72,7 @@ export default class extends Phaser.State {
 
     let nextEntity = 4;
 
+    // TODO add a border
     rm.create((x, y, createWallNumber) => {
       if (createWallNumber === 0) {
         return;
@@ -160,13 +161,12 @@ export default class extends Phaser.State {
 
     this.systems = this.initializeSystems();
 
-    this.game.world.setBounds(
-      0,
-      0,
-      MapConfig.width * MapConfig.tileSize,
-      MapConfig.height * MapConfig.tileSize
-    );
-    this.game.camera;
+    // this.game.world.setBounds(
+    //   0,
+    //   0,
+    //   MapConfig.width * MapConfig.tileSize,
+    //   MapConfig.height * MapConfig.tileSize
+    // );
 
     this.createUI();
 
