@@ -2,7 +2,7 @@
 
 import { System } from 'systems/system';
 import type { Entity } from 'entity';
-import { Renderable, Transform } from 'component';
+import { Player, Renderable, Transform } from 'component';
 import ComponentManager from 'component-manager';
 import MapConfig from 'config/map.json';
 
@@ -13,6 +13,7 @@ export default class RenderSystem implements System {
   draw: Function;
   clear: Function;
   map: Array<Array<*>>;
+  playerEntity: Entity;
 
   constructor(componentManager: ComponentManager, game: *) {
     this.componentManager = componentManager;
@@ -35,6 +36,13 @@ export default class RenderSystem implements System {
         this.map[x][y] = cell;
       }
     }
+
+    this.playerEntity = componentManager
+      .getAll({
+        component: Player,
+      })
+      .keys()
+      .next().value;
 
     this.clear = () => {
       for (let x = 0; x < MAP_WIDTH; x++) {
@@ -59,6 +67,12 @@ export default class RenderSystem implements System {
 
   update(entities: Array<Entity>) {
     this.clear();
+
+    const playerTransform = this.componentManager.get({
+      entity: this.playerEntity,
+      component: Transform,
+    });
+
     for (let myEntity of entities) {
       const renderable = this.componentManager.get({
         entity: myEntity,
@@ -73,8 +87,8 @@ export default class RenderSystem implements System {
       if (renderable && renderable.visible && transform) {
         // TODO Rename this
         this.draw({
-          x: transform.x,
-          y: transform.y,
+          x: transform.x - playerTransform.x,
+          y: transform.y - playerTransform.y,
           glyph: renderable.glyph,
         });
       }

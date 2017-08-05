@@ -68,7 +68,7 @@ export default class extends Phaser.State {
     this.entities = [];
 
     const rm = new ROT.Map.Cellular(MapConfig.width, MapConfig.height);
-    rm.randomize(0.4);
+    rm.randomize(0.3);
 
     let nextEntity = 4;
 
@@ -114,8 +114,8 @@ export default class extends Phaser.State {
             },
           ],
         }),
-        new Attackable(),
-        new Collidable(),
+        // new Attackable(),
+        // new Collidable(),
         new Metadata({
           name: 'Skeleton',
           description: 'A spooky boneman',
@@ -238,15 +238,6 @@ export default class extends Phaser.State {
   }
 
   update() {
-    const playerTransform = this.componentManager.get({
-      entity: 1,
-      component: Transform,
-    });
-
-    this.game.camera.setPosition(
-      playerTransform.x * MapConfig.tileSize,
-      playerTransform.y * MapConfig.tileSize
-    );
     for (let system of this.systems.update) {
       system.update(this.entities);
     }
@@ -256,7 +247,6 @@ export default class extends Phaser.State {
   }
 
   render() {
-    this.game.debug.cameraInfo(this.game.camera, 300, 32);
     for (let system of this.systems.render) {
       system.update(this.entities);
     }
