@@ -160,6 +160,8 @@ export default class extends Phaser.State {
 
     this.systems = this.initializeSystems();
 
+    this.createUI();
+
     this.log = this.game.add.text('', 200, 10, {
       font: '10pt Monaco, monospace',
       wordWrapWidth: 100,
@@ -176,6 +178,22 @@ export default class extends Phaser.State {
       },
       false
     );
+  }
+
+  createUI() {
+    const WORLD_BOUNDS = this.game.world.bounds;
+    const bottomPanelHeightPercent = 0.5;
+
+    const graphics = this.game.add.graphics();
+    graphics.beginFill(0xff00cc, 0.1);
+    graphics.drawRect(
+      0,
+      0,
+      WORLD_BOUNDS.width,
+      WORLD_BOUNDS.height * bottomPanelHeightPercent
+    );
+    graphics.alignIn(WORLD_BOUNDS, Phaser.BOTTOM_CENTER);
+    graphics.endFill();
   }
 
   initializeSystems() {
