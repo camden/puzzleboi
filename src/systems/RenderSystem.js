@@ -22,9 +22,10 @@ export default class RenderSystem implements System {
     // Init map - should this be somewhere else?
     const MAP_WIDTH = MapConfig.width;
     const MAP_HEIGHT = MapConfig.height;
+    const gameSizePct = 0.75;
     const cameraBounds = {
       width: this.game.scale.width / MapConfig.tileSize,
-      height: 10,
+      height: this.game.scale.height / MapConfig.tileSize * gameSizePct,
     };
     const blankChar = '·';
     // TODO this is ugly... use a camera
@@ -34,9 +35,14 @@ export default class RenderSystem implements System {
     for (let x = 0; x < MAP_WIDTH; x++) {
       this.map[x] = [];
       for (let y = 0; y < MAP_HEIGHT; y++) {
-        const cell = this.game.add.text(x * spacing, y * spacing, blankChar, {
-          font: `15pt Monaco, monospace`,
-        });
+        const cell = this.game.add.bitmapText(
+          x * spacing,
+          y * spacing,
+          'monaco',
+          blankChar,
+          30
+        );
+        cell.tint = 0x000000;
         this.map[x][y] = cell;
       }
     }
@@ -57,11 +63,11 @@ export default class RenderSystem implements System {
     };
 
     this.draw = ({ x, y, glyph }) => {
-      if (x < 0 || x >= cameraBounds.width) {
+      if (x < 0 || x >= cameraBounds.width || x >= MAP_WIDTH) {
         return;
       }
 
-      if (y < 0 || y >= cameraBounds.height) {
+      if (y < 0 || y >= cameraBounds.height || y >= MAP_HEIGHT) {
         return;
       }
 

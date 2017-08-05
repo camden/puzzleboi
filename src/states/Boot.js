@@ -13,6 +13,11 @@ export default class extends Phaser.State {
   preload() {
     this.load.image('loaderBg', './assets/images/loader-bg.png');
     this.load.image('loaderBar', './assets/images/loader-bar.png');
+    this.load.bitmapFont(
+      'monaco',
+      './assets/fonts/monaco/monaco.png',
+      './assets/fonts/monaco/monaco.fnt'
+    );
   }
 
   create() {
