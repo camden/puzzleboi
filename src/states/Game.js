@@ -191,7 +191,7 @@ export default class extends Phaser.State {
   createUI() {
     const WORLD_BOUNDS = this.game.world.bounds;
     const SCREEN_BOUNDS = this.game.scale.bounds;
-    const gamePct = 0.75;
+    const gamePct = 0.7;
 
     const gameRect = new Phaser.Rectangle(
       0,
@@ -208,7 +208,7 @@ export default class extends Phaser.State {
     );
 
     const messagesPanel = this.game.add.graphics();
-    messagesPanel.beginFill(0x333333, 0.99);
+    messagesPanel.beginFill(0x333333, 0.6);
     messagesPanel.drawRect(
       messagesRect.x,
       messagesRect.y,

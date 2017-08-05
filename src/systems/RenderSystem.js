@@ -22,8 +22,8 @@ export default class RenderSystem implements System {
     // Init map - should this be somewhere else?
     const MAP_WIDTH = MapConfig.width;
     const MAP_HEIGHT = MapConfig.height;
-    const gameSizePct = 0.75;
-    const cameraBounds = {
+    const gameSizePct = 0.7;
+    this.cameraBounds = {
       width: this.game.scale.width / MapConfig.tileSize,
       height: this.game.scale.height / MapConfig.tileSize * gameSizePct,
     };
@@ -63,11 +63,11 @@ export default class RenderSystem implements System {
     };
 
     this.draw = ({ x, y, glyph }) => {
-      if (x < 0 || x >= cameraBounds.width || x >= MAP_WIDTH) {
+      if (x < 0 || x >= this.cameraBounds.width - 1 || x >= MAP_WIDTH) {
         return;
       }
 
-      if (y < 0 || y >= cameraBounds.height || y >= MAP_HEIGHT) {
+      if (y < 0 || y >= this.cameraBounds.height - 1 || y >= MAP_HEIGHT) {
         return;
       }
 
@@ -98,11 +98,11 @@ export default class RenderSystem implements System {
         const x =
           transform.x -
           playerTransform.x +
-          Math.round((MapConfig.width - 1) / 2);
+          Math.round(this.cameraBounds.width / 2);
         const y =
           transform.y -
           playerTransform.y +
-          Math.round((MapConfig.height - 1) / 2);
+          Math.round(this.cameraBounds.height / 2);
         // TODO Rename this
         this.draw({
           x: x,
