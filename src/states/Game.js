@@ -208,7 +208,7 @@ export default class extends Phaser.State {
     );
 
     const messagesPanel = this.game.add.graphics();
-    messagesPanel.beginFill(0x333333, 0.6);
+    messagesPanel.beginFill(0x333333, 1);
     messagesPanel.drawRect(
       messagesRect.x,
       messagesRect.y,
@@ -217,6 +217,15 @@ export default class extends Phaser.State {
     );
     messagesPanel.endFill();
     messagesPanel.alignIn(SCREEN_BOUNDS, Phaser.BOTTOM_CENTER);
+
+    const log = this.game.add.bitmapText(
+      0,
+      0,
+      'monaco',
+      'this is a test of the log!',
+      20
+    );
+    log.alignIn(messagesPanel, Phaser.TOP_LEFT);
   }
 
   initializeSystems() {
