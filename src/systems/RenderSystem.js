@@ -23,23 +23,15 @@ export default class RenderSystem implements System {
     const MAP_HEIGHT = MapConfig.height;
     const blankChar = '·';
     // TODO this is ugly... use a camera
-    const spacing = 20;
-    const x_offset = 30;
-    const y_offset = 300;
+    const spacing = MapConfig.tileSize;
     this.map = new Array(MAP_WIDTH);
 
     for (let x = 0; x < MAP_WIDTH; x++) {
       this.map[x] = [];
       for (let y = 0; y < MAP_HEIGHT; y++) {
-        const cell = this.game.add.text(
-          x_offset + x * spacing,
-          // Multiply by -1 to make origin at bottom left
-          y_offset + y * spacing * -1,
-          blankChar,
-          {
-            font: '10pt Monaco, monospace',
-          }
-        );
+        const cell = this.game.add.text(x * spacing, y * spacing, blankChar, {
+          font: `15pt Monaco, monospace`,
+        });
         this.map[x][y] = cell;
       }
     }

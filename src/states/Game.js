@@ -160,6 +160,14 @@ export default class extends Phaser.State {
 
     this.systems = this.initializeSystems();
 
+    this.game.world.setBounds(
+      0,
+      0,
+      MapConfig.width * MapConfig.tileSize,
+      MapConfig.height * MapConfig.tileSize
+    );
+    this.game.camera;
+
     this.createUI();
 
     this.log = this.game.add.text('', 200, 10, {
@@ -182,18 +190,33 @@ export default class extends Phaser.State {
 
   createUI() {
     const WORLD_BOUNDS = this.game.world.bounds;
-    const bottomPanelHeightPercent = 0.5;
+    const SCREEN_BOUNDS = this.game.scale.bounds;
+    const gamePct = 0.5;
 
-    const graphics = this.game.add.graphics();
-    graphics.beginFill(0xff00cc, 0.1);
-    graphics.drawRect(
+    const gameRect = new Phaser.Rectangle(
       0,
       0,
-      WORLD_BOUNDS.width,
-      WORLD_BOUNDS.height * bottomPanelHeightPercent
+      SCREEN_BOUNDS.width,
+      SCREEN_BOUNDS.height * gamePct
     );
-    graphics.alignIn(WORLD_BOUNDS, Phaser.BOTTOM_CENTER);
-    graphics.endFill();
+
+    const messagesRect = new Phaser.Rectangle(
+      0,
+      0,
+      SCREEN_BOUNDS.width,
+      SCREEN_BOUNDS.height * (1 - gamePct)
+    );
+
+    const messagesPanel = this.game.add.graphics();
+    messagesPanel.beginFill(0xff00cc, 0.5);
+    messagesPanel.drawRect(
+      messagesRect.x,
+      messagesRect.y,
+      messagesRect.width,
+      messagesRect.height
+    );
+    messagesPanel.endFill();
+    messagesPanel.alignIn(SCREEN_BOUNDS, Phaser.BOTTOM_CENTER);
   }
 
   initializeSystems() {
@@ -215,6 +238,15 @@ export default class extends Phaser.State {
   }
 
   update() {
+    const playerTransform = this.componentManager.get({
+      entity: 1,
+      component: Transform,
+    });
+
+    this.game.camera.setPosition(
+      playerTransform.x * MapConfig.tileSize,
+      playerTransform.y * MapConfig.tileSize
+    );
     for (let system of this.systems.update) {
       system.update(this.entities);
     }
@@ -224,6 +256,7 @@ export default class extends Phaser.State {
   }
 
   render() {
+    this.game.debug.cameraInfo(this.game.camera, 300, 32);
     for (let system of this.systems.render) {
       system.update(this.entities);
     }
