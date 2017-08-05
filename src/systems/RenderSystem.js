@@ -87,8 +87,14 @@ export default class RenderSystem implements System {
       if (renderable && renderable.visible && transform) {
         // TODO Rename this
         this.draw({
-          x: transform.x - playerTransform.x,
-          y: transform.y - playerTransform.y,
+          x:
+            transform.x -
+            playerTransform.x +
+            Math.round((MapConfig.width - 1) / 2),
+          y:
+            transform.y -
+            playerTransform.y +
+            Math.round((MapConfig.height - 1) / 2),
           glyph: renderable.glyph,
         });
       }
