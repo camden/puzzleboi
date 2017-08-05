@@ -85,16 +85,18 @@ export default class RenderSystem implements System {
 
       // Eventually do a bitmask?
       if (renderable && renderable.visible && transform) {
+        const x =
+          transform.x -
+          playerTransform.x +
+          Math.round((MapConfig.width - 1) / 2);
+        const y =
+          transform.y -
+          playerTransform.y +
+          Math.round((MapConfig.height - 1) / 2);
         // TODO Rename this
         this.draw({
-          x:
-            transform.x -
-            playerTransform.x +
-            Math.round((MapConfig.width - 1) / 2),
-          y:
-            transform.y -
-            playerTransform.y +
-            Math.round((MapConfig.height - 1) / 2),
+          x: x,
+          y: y,
           glyph: renderable.glyph,
         });
       }
