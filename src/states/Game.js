@@ -25,6 +25,7 @@ import { onKeyEvent } from 'input';
 import ComponentManager from 'component-manager';
 import ROT from '../../vendor/rot.min.js';
 import MapConfig from 'config/map.json';
+import GameConfig from 'config/game.json';
 
 export default class extends Phaser.State {
   // TODO Make this its own class
@@ -189,22 +190,20 @@ export default class extends Phaser.State {
   }
 
   createUI() {
-    const WORLD_BOUNDS = this.game.world.bounds;
     const SCREEN_BOUNDS = this.game.scale.bounds;
-    const gamePct = 0.7;
 
     const gameRect = new Phaser.Rectangle(
       0,
       0,
-      SCREEN_BOUNDS.width,
-      SCREEN_BOUNDS.height * gamePct
+      GameConfig.gamePanelWidth,
+      GameConfig.gamePanelHeight
     );
 
     const messagesRect = new Phaser.Rectangle(
       0,
       0,
       SCREEN_BOUNDS.width,
-      SCREEN_BOUNDS.height * (1 - gamePct)
+      SCREEN_BOUNDS.height - GameConfig.gamePanelHeight
     );
 
     const messagesPanel = this.game.add.graphics();

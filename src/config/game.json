@@ -1,5 +1,7 @@
 {
   "name": "golem-rl",
-  "gameWidth": 760,
-  "gameHeight": 600
+  "screenWidth": 760,
+  "screenHeight": 600,
+  "gamePanelHeight": 400,
+  "gamePanelWidth": 500
 }

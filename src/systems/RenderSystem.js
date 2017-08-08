@@ -5,6 +5,7 @@ import type { Entity } from 'entity';
 import { Player, Renderable, Transform } from 'component';
 import ComponentManager from 'component-manager';
 import MapConfig from 'config/map.json';
+import GameConfig from 'config/game.json';
 
 export default class RenderSystem implements System {
   componentManager: ComponentManager;
@@ -20,8 +21,8 @@ export default class RenderSystem implements System {
     this.game = game;
 
     // Height and width in pixels
-    const GAME_WIDTH = 400;
-    const GAME_HEIGHT = 400;
+    const GAME_WIDTH = GameConfig.gamePanelWidth;
+    const GAME_HEIGHT = GameConfig.gamePanelHeight;
 
     const spacing = MapConfig.tileSize;
     const maxMapWidth = Math.floor(GAME_WIDTH / spacing);
