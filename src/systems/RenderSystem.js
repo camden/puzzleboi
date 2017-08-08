@@ -13,7 +13,8 @@ export default class RenderSystem implements System {
   // TODO remove this
   draw: Function;
   clear: Function;
-  map: Array<Array<*>>;
+  // TODO replace * with BitmapText
+  renderedMap: Array<Array<*>>;
   playerEntity: Entity;
 
   constructor(componentManager: ComponentManager, game: *) {
@@ -27,17 +28,19 @@ export default class RenderSystem implements System {
     const spacing = MapConfig.tileSize;
     const maxMapWidth = Math.floor(GAME_WIDTH / spacing);
     const maxMapHeight = Math.floor(GAME_HEIGHT / spacing);
-    const RENDERED_MAP_WIDTH = Math.min(MapConfig.width, maxMapWidth);
-    const RENDERED_MAP_HEIGHT = Math.min(MapConfig.height, maxMapHeight);
+    const ACTUAL_MAP_WIDTH = MapConfig.width;
+    const ACTUAL_MAP_HEIGHT = MapConfig.height;
+    const RENDERED_MAP_WIDTH = Math.min(ACTUAL_MAP_WIDTH, maxMapWidth);
+    const RENDERED_MAP_HEIGHT = Math.min(ACTUAL_MAP_HEIGHT, maxMapHeight);
 
     const blankChar = ' ';
     const floorChar = '·';
     const textSize = 30;
 
-    this.map = new Array(RENDERED_MAP_WIDTH);
+    this.renderedMap = new Array(RENDERED_MAP_WIDTH);
 
     for (let x = 0; x < RENDERED_MAP_WIDTH; x++) {
-      this.map[x] = [];
+      this.renderedMap[x] = [];
       for (let y = 0; y < RENDERED_MAP_HEIGHT; y++) {
         const cell = this.game.add.bitmapText(
           x * spacing,
@@ -47,7 +50,8 @@ export default class RenderSystem implements System {
           textSize
         );
         cell.tint = 0x000000;
-        this.map[x][y] = cell;
+
+        this.renderedMap[x][y] = cell;
       }
     }
 
@@ -59,29 +63,43 @@ export default class RenderSystem implements System {
       .keys()
       .next().value;
 
-    this.clear = () => {
+    this.clearAndDrawFloor = () => {
+      // Clear everything on screen
       for (let x = 0; x < RENDERED_MAP_WIDTH; x++) {
         for (let y = 0; y < RENDERED_MAP_HEIGHT; y++) {
-          this.map[x][y].setText(blankChar);
+          this.renderedMap[x][y].setText(blankChar);
+        }
+      }
+
+      // Draw the floor
+      for (let x = 0; x < ACTUAL_MAP_WIDTH; x++) {
+        for (let y = 0; y < ACTUAL_MAP_HEIGHT; y++) {
+          const xInRenderedBounds = x < RENDERED_MAP_WIDTH;
+          const yInRenderedBounds = y < RENDERED_MAP_HEIGHT;
+
+          const onScreenAndInMapBounds = xInRenderedBounds && yInRenderedBounds;
+          if (onScreenAndInMapBounds) {
+            this.renderedMap[x][y].setText(floorChar);
+          }
         }
       }
     };
 
     this.draw = ({ x, y, glyph }) => {
-      if (x < 0 || x >= this.map.length) {
+      if (x < 0 || x >= RENDERED_MAP_WIDTH) {
         return;
       }
 
-      if (y < 0 || y >= this.map[x].length) {
+      if (y < 0 || y >= RENDERED_MAP_HEIGHT) {
         return;
       }
 
-      this.map[x][y].setText(glyph);
+      this.renderedMap[x][y].setText(glyph);
     };
   }
 
   update(entities: Array<Entity>) {
-    this.clear();
+    this.clearAndDrawFloor();
 
     const playerTransform = this.componentManager.get({
       entity: this.playerEntity,
@@ -100,8 +118,8 @@ export default class RenderSystem implements System {
 
       // Eventually do a bitmask?
       if (renderable && renderable.visible && transform) {
-        const x = transform.x - playerTransform.x;
-        const y = transform.y - playerTransform.y;
+        const x = transform.x;
+        const y = transform.y;
         // TODO Rename this
         this.draw({
           x: x,
