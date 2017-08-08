@@ -2,7 +2,7 @@
 
 import { System } from 'systems/system';
 import type { Entity } from 'entity';
-import { Attacked } from 'component';
+import { Attacked, Metadata } from 'component';
 import ComponentManager from 'component-manager';
 import { log } from 'utils';
 
@@ -23,10 +23,16 @@ export default class AttackedSystem implements System {
       });
 
       if (attackedComponent) {
-        log({
-          componentManager: this.componentManager,
-          message: `${myEntity} has been attacked! Ouch!`,
+        const metadataComponent = this.componentManager.get({
+          entity: myEntity,
+          component: Metadata,
         });
+        if (metadataComponent) {
+          log({
+            componentManager: this.componentManager,
+            message: `${metadataComponent.name} has been attacked! Ouch!`,
+          });
+        }
         // Once attack is resolved, remove the "Attacked" component
         this.componentManager.remove({
           entity: myEntity,
