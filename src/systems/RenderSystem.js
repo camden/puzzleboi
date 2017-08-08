@@ -31,15 +31,16 @@ export default class RenderSystem implements System {
     const maxMapHeight = Math.floor(GAME_HEIGHT / spacing);
     const ACTUAL_MAP_WIDTH = MapConfig.width;
     const ACTUAL_MAP_HEIGHT = MapConfig.height;
-    const RENDERED_MAP_WIDTH = Math.min(ACTUAL_MAP_WIDTH, maxMapWidth);
-    const RENDERED_MAP_HEIGHT = Math.min(ACTUAL_MAP_HEIGHT, maxMapHeight);
+
+    this.RENDERED_MAP_WIDTH = Math.min(ACTUAL_MAP_WIDTH, maxMapWidth);
+    this.RENDERED_MAP_HEIGHT = Math.min(ACTUAL_MAP_HEIGHT, maxMapHeight);
 
     const blankChar = ' ';
     const floorChar = '·';
     const textSize = 30;
 
     this.actualMap = new Array(ACTUAL_MAP_WIDTH);
-    this.renderedMap = new Array(RENDERED_MAP_WIDTH);
+    this.renderedMap = new Array(this.RENDERED_MAP_WIDTH);
 
     // Initialize the actualMap
     for (let x = 0; x < ACTUAL_MAP_WIDTH; x++) {
@@ -50,9 +51,9 @@ export default class RenderSystem implements System {
     }
 
     // Initialize the renderedMap
-    for (let x = 0; x < RENDERED_MAP_WIDTH; x++) {
+    for (let x = 0; x < this.RENDERED_MAP_WIDTH; x++) {
       this.renderedMap[x] = [];
-      for (let y = 0; y < RENDERED_MAP_HEIGHT; y++) {
+      for (let y = 0; y < this.RENDERED_MAP_HEIGHT; y++) {
         const cell = this.game.add.bitmapText(
           x * spacing,
           y * spacing,
@@ -100,8 +101,8 @@ export default class RenderSystem implements System {
     };
 
     this.drawActualMapToScreen = ({ offset_x, offset_y }) => {
-      for (let x = 0; x < RENDERED_MAP_WIDTH; x++) {
-        for (let y = 0; y < RENDERED_MAP_HEIGHT; y++) {
+      for (let x = 0; x < this.RENDERED_MAP_WIDTH; x++) {
+        for (let y = 0; y < this.RENDERED_MAP_HEIGHT; y++) {
           const calculated_x = x + offset_x;
           const calculated_y = y + offset_y;
 
@@ -157,8 +158,8 @@ export default class RenderSystem implements System {
     }
 
     this.drawActualMapToScreen({
-      offset_x: playerTransform.x,
-      offset_y: playerTransform.y,
+      offset_x: playerTransform.x - this.RENDERED_MAP_WIDTH / 2,
+      offset_y: playerTransform.y - this.RENDERED_MAP_HEIGHT / 2,
     });
   }
 }
