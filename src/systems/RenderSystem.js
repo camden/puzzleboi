@@ -32,8 +32,8 @@ export default class RenderSystem implements System {
     const ACTUAL_MAP_WIDTH = MapConfig.width;
     const ACTUAL_MAP_HEIGHT = MapConfig.height;
 
-    this.RENDERED_MAP_WIDTH = Math.min(ACTUAL_MAP_WIDTH, maxMapWidth);
-    this.RENDERED_MAP_HEIGHT = Math.min(ACTUAL_MAP_HEIGHT, maxMapHeight);
+    this.RENDERED_MAP_WIDTH = maxMapWidth;
+    this.RENDERED_MAP_HEIGHT = maxMapHeight;
 
     const blankChar = ' ';
     const floorChar = '·';
