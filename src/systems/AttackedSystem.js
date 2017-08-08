@@ -4,6 +4,7 @@ import { System } from 'systems/system';
 import type { Entity } from 'entity';
 import { Attacked } from 'component';
 import ComponentManager from 'component-manager';
+import { log } from 'utils';
 
 export default class AttackedSystem implements System {
   componentManager: ComponentManager;
@@ -22,7 +23,10 @@ export default class AttackedSystem implements System {
       });
 
       if (attackedComponent) {
-        console.log(`${myEntity} has been attacked! Ouch!`);
+        log({
+          componentManager: this.componentManager,
+          message: `${myEntity} has been attacked! Ouch!`,
+        });
         // Once attack is resolved, remove the "Attacked" component
         this.componentManager.remove({
           entity: myEntity,

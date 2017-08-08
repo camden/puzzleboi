@@ -99,9 +99,9 @@ export default class extends Phaser.State {
         new Actor({
           // TODO make these classes, not strings
           tactics: [
-            // {
-            //   name: 'attack_adjacent',
-            // },
+            {
+              name: 'attack_adjacent',
+            },
             // {
             //   name: 'move_towards_player',
             //   params: {
@@ -114,8 +114,8 @@ export default class extends Phaser.State {
             },
           ],
         }),
-        // new Attackable(),
-        // new Collidable(),
+        new Attackable(),
+        new Collidable(),
         new Metadata({
           name: 'Skeleton',
           description: 'A spooky boneman',
@@ -168,13 +168,6 @@ export default class extends Phaser.State {
     this.entities.push(logEntity);
 
     this.systems = this.initializeSystems();
-
-    // this.game.world.setBounds(
-    //   0,
-    //   0,
-    //   MapConfig.width * MapConfig.tileSize,
-    //   MapConfig.height * MapConfig.tileSize
-    // );
 
     this.createUI();
 

@@ -268,7 +268,10 @@ export class MoveCommand implements Command {
           }
         }
 
+        // Only check for collision if the current entity has a turnComponent
         const checkForCollision = !!turnComponent;
+
+        let allowedToMove = true;
 
         if (checkForCollision) {
           const collidablesOnNextTile = entitiesOnTile.reduce(
@@ -324,17 +327,20 @@ export class MoveCommand implements Command {
 
           if (collidablesOnNextTile) {
             // Here is where you would dispatch a generic "collision" event!!
-            return;
+            allowedToMove = false;
           }
         }
 
-        transform.x = next_x;
-        transform.y = next_y;
-
-        acted = true;
+        if (allowedToMove) {
+          transform.x = next_x;
+          transform.y = next_y;
+          acted = true;
+        }
 
         if (turnComponent) {
-          turnComponent.myTurn = !acted;
+          if (acted) {
+            turnComponent.myTurn = false;
+          }
         }
       }
     );

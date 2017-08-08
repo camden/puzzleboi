@@ -12,6 +12,7 @@ import {
   Turn,
 } from 'component';
 import ComponentManager from 'component-manager';
+import { log } from 'utils';
 
 // TODO should this belong in utils?
 import { getEntitiesWithin, getPathToTarget } from 'utils';
@@ -26,8 +27,6 @@ export default class AISystem implements System {
   }
 
   update(entities: Array<Entity>) {
-    // TODO In the future, do this:
-    // https://github.com/libgdx/ashley/wiki/How-to-use-Ashley#entity-systems
     for (let myEntity of entities) {
       // TODO pull this out
       const turnComponent = this.componentManager.get({
