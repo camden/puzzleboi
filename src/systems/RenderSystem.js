@@ -27,17 +27,18 @@ export default class RenderSystem implements System {
     const spacing = MapConfig.tileSize;
     const maxMapWidth = Math.floor(GAME_WIDTH / spacing);
     const maxMapHeight = Math.floor(GAME_HEIGHT / spacing);
-    const MAP_WIDTH = Math.min(MapConfig.width, maxMapWidth);
-    const MAP_HEIGHT = Math.min(MapConfig.height, maxMapHeight);
+    const RENDERED_MAP_WIDTH = Math.min(MapConfig.width, maxMapWidth);
+    const RENDERED_MAP_HEIGHT = Math.min(MapConfig.height, maxMapHeight);
 
-    const blankChar = '·';
+    const blankChar = ' ';
+    const floorChar = '·';
     const textSize = 30;
 
-    this.map = new Array(MAP_WIDTH);
+    this.map = new Array(RENDERED_MAP_WIDTH);
 
-    for (let x = 0; x < MAP_WIDTH; x++) {
+    for (let x = 0; x < RENDERED_MAP_WIDTH; x++) {
       this.map[x] = [];
-      for (let y = 0; y < MAP_HEIGHT; y++) {
+      for (let y = 0; y < RENDERED_MAP_HEIGHT; y++) {
         const cell = this.game.add.bitmapText(
           x * spacing,
           y * spacing,
@@ -59,8 +60,8 @@ export default class RenderSystem implements System {
       .next().value;
 
     this.clear = () => {
-      for (let x = 0; x < MAP_WIDTH; x++) {
-        for (let y = 0; y < MAP_HEIGHT; y++) {
+      for (let x = 0; x < RENDERED_MAP_WIDTH; x++) {
+        for (let y = 0; y < RENDERED_MAP_HEIGHT; y++) {
           this.map[x][y].setText(blankChar);
         }
       }
