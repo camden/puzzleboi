@@ -15,6 +15,7 @@ export default class RenderSystem implements System {
   clear: Function;
   // TODO replace * with BitmapText
   renderedMap: Array<Array<*>>;
+  actualMap: Array<Array<string>>;
   playerEntity: Entity;
 
   constructor(componentManager: ComponentManager, game: *) {
@@ -37,8 +38,18 @@ export default class RenderSystem implements System {
     const floorChar = '·';
     const textSize = 30;
 
+    this.actualMap = new Array(ACTUAL_MAP_WIDTH);
     this.renderedMap = new Array(RENDERED_MAP_WIDTH);
 
+    // Initialize the actualMap
+    for (let x = 0; x < ACTUAL_MAP_WIDTH; x++) {
+      this.actualMap[x] = [];
+      for (let y = 0; y < ACTUAL_MAP_HEIGHT; y++) {
+        this.actualMap[x][y] = blankChar;
+      }
+    }
+
+    // Initialize the renderedMap
     for (let x = 0; x < RENDERED_MAP_WIDTH; x++) {
       this.renderedMap[x] = [];
       for (let y = 0; y < RENDERED_MAP_HEIGHT; y++) {
@@ -63,43 +74,59 @@ export default class RenderSystem implements System {
       .keys()
       .next().value;
 
-    this.clearAndDrawFloor = () => {
-      // Clear everything on screen
-      for (let x = 0; x < RENDERED_MAP_WIDTH; x++) {
-        for (let y = 0; y < RENDERED_MAP_HEIGHT; y++) {
-          this.renderedMap[x][y].setText(blankChar);
-        }
+    this.setActualMapText = ({ x, y, glyph }) => {
+      if (x < 0 || x >= ACTUAL_MAP_WIDTH) {
+        return;
       }
 
-      // Draw the floor
+      if (y < 0 || y >= ACTUAL_MAP_HEIGHT) {
+        return;
+      }
+
+      const actualMapGlyph = this.actualMap[x][y];
+      if (actualMapGlyph === glyph) {
+        return;
+      }
+
+      this.actualMap[x][y] = glyph;
+    };
+
+    this.clearActualMap = () => {
       for (let x = 0; x < ACTUAL_MAP_WIDTH; x++) {
         for (let y = 0; y < ACTUAL_MAP_HEIGHT; y++) {
-          const xInRenderedBounds = x < RENDERED_MAP_WIDTH;
-          const yInRenderedBounds = y < RENDERED_MAP_HEIGHT;
+          this.actualMap[x][y] = floorChar;
+        }
+      }
+    };
 
-          const onScreenAndInMapBounds = xInRenderedBounds && yInRenderedBounds;
-          if (onScreenAndInMapBounds) {
-            this.renderedMap[x][y].setText(floorChar);
+    this.drawActualMapToScreen = ({ offset_x, offset_y }) => {
+      for (let x = 0; x < RENDERED_MAP_WIDTH; x++) {
+        for (let y = 0; y < RENDERED_MAP_HEIGHT; y++) {
+          const calculated_x = x + offset_x;
+          const calculated_y = y + offset_y;
+
+          const xOutOfActualBounds =
+            calculated_x < 0 || calculated_x >= ACTUAL_MAP_WIDTH;
+          const yOutOfActualBounds =
+            calculated_y < 0 || calculated_y >= ACTUAL_MAP_HEIGHT;
+
+          if (xOutOfActualBounds || yOutOfActualBounds) {
+            this.renderedMap[x][y].setText(blankChar);
+          } else {
+            const actualMapGlyph = this.actualMap[calculated_x][calculated_y];
+            this.renderedMap[x][y].setText(actualMapGlyph);
           }
         }
       }
     };
 
     this.draw = ({ x, y, glyph }) => {
-      if (x < 0 || x >= RENDERED_MAP_WIDTH) {
-        return;
-      }
-
-      if (y < 0 || y >= RENDERED_MAP_HEIGHT) {
-        return;
-      }
-
-      this.renderedMap[x][y].setText(glyph);
+      this.setActualMapText({ x, y, glyph });
     };
   }
 
   update(entities: Array<Entity>) {
-    this.clearAndDrawFloor();
+    this.clearActualMap();
 
     const playerTransform = this.componentManager.get({
       entity: this.playerEntity,
@@ -128,5 +155,10 @@ export default class RenderSystem implements System {
         });
       }
     }
+
+    this.drawActualMapToScreen({
+      offset_x: playerTransform.x,
+      offset_y: playerTransform.y,
+    });
   }
 }
