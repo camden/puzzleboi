@@ -214,7 +214,7 @@ export default class extends Phaser.State {
     );
 
     const messagesPanel = this.game.add.graphics();
-    messagesPanel.beginFill(0x333333, 0.5);
+    messagesPanel.beginFill(0x555555, 1);
     messagesPanel.drawRect(
       messagesRect.x,
       messagesRect.y,
