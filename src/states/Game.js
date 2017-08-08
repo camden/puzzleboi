@@ -8,6 +8,8 @@ import AttackedSystem from 'systems/AttackedSystem';
 import RenderSystem from 'systems/RenderSystem';
 import TurnSystem from 'systems/TurnSystem';
 import type { Entity } from 'entity';
+import { createEntity } from 'entity';
+
 import {
   Actor,
   Attackable,
@@ -73,17 +75,13 @@ export default class extends Phaser.State {
     const rm = new ROT.Map.Cellular(MapConfig.width, MapConfig.height);
     rm.randomize(0.42);
 
-    let nextEntity = 5;
-
-    // TODO add a border
     rm.create((x, y, createWallNumber) => {
       if (createWallNumber === 0) {
         return;
       }
 
-      this.entities.push(nextEntity);
-      this.componentManager.add({
-        entity: nextEntity,
+      const nextEntity = createEntity({
+        componentManager: this.componentManager,
         components: [
           new Collidable(),
           new Transform({ x: x, y: y }),
@@ -91,14 +89,12 @@ export default class extends Phaser.State {
           new Metadata({ name: 'Wall', description: 'A solid stone wall.' }),
         ],
       });
-      nextEntity++;
+      this.entities.push(nextEntity);
     });
 
     // TODO add assemblages
-    const enemyEntity = 2;
-    this.entities.push(enemyEntity);
-    this.componentManager.add({
-      entity: enemyEntity,
+    const enemyEntity = createEntity({
+      componentManager: this.componentManager,
       components: [
         new Actor({
           // TODO make these classes, not strings
@@ -129,12 +125,11 @@ export default class extends Phaser.State {
         new Turn({ recharge_time: 12 }),
       ],
     });
+    this.entities.push(enemyEntity);
 
     // Do this automatically
-    const playerEntity = 1;
-    this.entities.push(playerEntity);
-    this.componentManager.add({
-      entity: playerEntity,
+    const playerEntity = createEntity({
+      componentManager: this.componentManager,
       components: [
         new Attackable(),
         new Collidable(),
@@ -152,26 +147,25 @@ export default class extends Phaser.State {
         }),
       ],
     });
+    this.entities.push(playerEntity);
 
     // Do this automatically
-    const cursorEntity = 3;
-    this.entities.push(cursorEntity);
-    this.componentManager.add({
-      entity: cursorEntity,
+    const cursorEntity = createEntity({
+      componentManager: this.componentManager,
       components: [
         new Cursor(),
         new Transform({ x: 1, y: 1 }),
         new Renderable({ glyph: 'X', visible: false }),
       ],
     });
+    this.entities.push(cursorEntity);
 
     // Do this automatically
-    const logEntity = 3;
-    this.entities.push(logEntity);
-    this.componentManager.add({
-      entity: logEntity,
+    const logEntity = createEntity({
+      componentManager: this.componentManager,
       components: [new Log()],
     });
+    this.entities.push(logEntity);
 
     this.systems = this.initializeSystems();
 
