@@ -2,9 +2,30 @@
 
 import { Graph, astar as AStar } from 'javascript-astar';
 import type { Entity } from 'entity';
-import { Collidable, Component, Transform } from 'component';
+import { Collidable, Component, Log, Transform } from 'component';
 import ComponentManager from 'component-manager';
 import MapConfig from 'config/map.json';
+
+export const log = ({
+  componentManager,
+  message,
+}: {
+  componentManager: ComponentManager,
+  message: string,
+}): void => {
+  const logComponent: Log = componentManager
+    .getAll({
+      component: Log,
+    })
+    .values()
+    .next().value;
+
+  if (!logComponent) {
+    throw new Error('Log component must exist!');
+  }
+
+  logComponent.messages.push(message);
+};
 
 export const getEntitiesWithin = ({
   componentManager,

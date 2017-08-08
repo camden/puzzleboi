@@ -5,8 +5,17 @@ import type { Entity } from 'entity';
 export class Component {}
 
 export class Attackable extends Component {}
-
 export class Cursor extends Component {}
+
+export class Log extends Component {
+  messages: Array<string>;
+
+  constructor() {
+    super();
+
+    this.messages = [];
+  }
+}
 
 export class Player extends Component {
   state: 'PLAYING' | 'LOOKING';

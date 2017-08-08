@@ -14,6 +14,7 @@ import {
   Attacked,
   Collidable,
   Cursor,
+  Log,
   Metadata,
   Player,
   PlayerControlled,
@@ -45,10 +46,6 @@ export default class extends Phaser.State {
     seedrandom(seed, { global: true });
     ROT.RNG.setSeed(seed);
 
-    this.engine = {};
-
-    this.engine.log = ['log initialized'];
-
     this.componentManager = new ComponentManager();
     this.componentManager.register({
       components: [
@@ -57,6 +54,7 @@ export default class extends Phaser.State {
         Attackable,
         Collidable,
         Cursor,
+        Log,
         Metadata,
         Player,
         PlayerControlled,
@@ -71,7 +69,7 @@ export default class extends Phaser.State {
     const rm = new ROT.Map.Cellular(MapConfig.width, MapConfig.height);
     rm.randomize(0.42);
 
-    let nextEntity = 4;
+    let nextEntity = 5;
 
     // TODO add a border
     rm.create((x, y, createWallNumber) => {
@@ -163,6 +161,14 @@ export default class extends Phaser.State {
       ],
     });
 
+    // Do this automatically
+    const logEntity = 3;
+    this.entities.push(logEntity);
+    this.componentManager.add({
+      entity: logEntity,
+      components: [new Log()],
+    });
+
     this.systems = this.initializeSystems();
 
     // this.game.world.setBounds(
@@ -173,12 +179,6 @@ export default class extends Phaser.State {
     // );
 
     this.createUI();
-
-    this.log = this.game.add.text('', 200, 10, {
-      font: '10pt Monaco, monospace',
-      wordWrapWidth: 100,
-    });
-    this.log.alignIn(this.game.world.bounds, Phaser.RIGHT_TOP, -400);
 
     this.fps = this.game.add.text(0, 0, 10);
     this.game.time.advancedTiming = true;
@@ -220,13 +220,25 @@ export default class extends Phaser.State {
     messagesPanel.endFill();
     messagesPanel.alignIn(SCREEN_BOUNDS, Phaser.BOTTOM_CENTER);
 
+    const logComponent: Log = this.componentManager
+      .getAll({
+        component: Log,
+      })
+      .values()
+      .next().value;
+
+    if (!logComponent) {
+      throw new Error('Log component must exist!');
+    }
+
     const log = this.game.add.bitmapText(
       0,
       0,
       'monaco',
-      'this is a test of the log!',
+      logComponent.messages.join('\n'),
       20
     );
+
     log.alignIn(messagesPanel, Phaser.TOP_LEFT);
   }
 
@@ -253,7 +265,6 @@ export default class extends Phaser.State {
       system.update(this.entities);
     }
 
-    this.log.setText(this.engine.log.slice().reverse().join('\n'));
     this.fps.setText(this.game.time.fps);
   }
 
