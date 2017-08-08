@@ -26,6 +26,7 @@ import { onKeyEvent } from 'input';
 import ComponentManager from 'component-manager';
 import ROT from '../../vendor/rot.min.js';
 import MapConfig from 'config/map.json';
+import UIConfig from 'config/ui.json';
 import GameConfig from 'config/game.json';
 
 export default class extends Phaser.State {
@@ -198,34 +199,40 @@ export default class extends Phaser.State {
   createUI() {
     const SCREEN_BOUNDS = this.game.scale.bounds;
 
-    this.ui.gameRect = new Phaser.Rectangle(
+    const gameRect = new Phaser.Rectangle(
       0,
       0,
       GameConfig.gamePanelWidth,
       GameConfig.gamePanelHeight
     );
 
-    this.ui.messagesRect = new Phaser.Rectangle(
+    const messagesRect = new Phaser.Rectangle(
       0,
       0,
       SCREEN_BOUNDS.width,
-      SCREEN_BOUNDS.height - GameConfig.gamePanelHeight - MapConfig.tileSize
+      SCREEN_BOUNDS.height - gameRect.height - MapConfig.tileSize
     );
 
     const messagesPanel = this.game.add.graphics();
     messagesPanel.beginFill(0x333333, 0.5);
     messagesPanel.drawRect(
-      this.ui.messagesRect.x,
-      this.ui.messagesRect.y,
-      this.ui.messagesRect.width,
-      this.ui.messagesRect.height
+      messagesRect.x,
+      messagesRect.y,
+      messagesRect.width,
+      messagesRect.height
     );
     messagesPanel.endFill();
     messagesPanel.alignIn(SCREEN_BOUNDS, Phaser.BOTTOM_CENTER);
 
-    this.ui.logMessages = this.game.add.bitmapText(0, 0, 'monaco', '', 20);
+    this.ui.logMessages = this.game.add.bitmapText(
+      0,
+      0,
+      'monaco',
+      '',
+      UIConfig.logTextSize
+    );
 
-    this.ui.logMessages.alignIn(messagesPanel, Phaser.TOP_LEFT);
+    this.ui.logMessages.alignIn(messagesPanel, Phaser.TOP_LEFT, -15, -10);
   }
 
   updateUI() {
@@ -240,7 +247,9 @@ export default class extends Phaser.State {
       throw new Error('Log component must exist!');
     }
 
-    this.ui.logMessages.setText(logComponent.messages.join('\n'));
+    this.ui.logMessages.setText(
+      logComponent.messages.slice().reverse().join('\n')
+    );
   }
 
   initializeSystems() {
