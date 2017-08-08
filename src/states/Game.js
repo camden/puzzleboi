@@ -46,6 +46,9 @@ export default class extends Phaser.State {
     seedrandom(seed, { global: true });
     ROT.RNG.setSeed(seed);
 
+    // TODO rename this? or don't make it top level?
+    this.ui = {};
+
     this.componentManager = new ComponentManager();
     this.componentManager.register({
       components: [
@@ -195,14 +198,14 @@ export default class extends Phaser.State {
   createUI() {
     const SCREEN_BOUNDS = this.game.scale.bounds;
 
-    const gameRect = new Phaser.Rectangle(
+    this.ui.gameRect = new Phaser.Rectangle(
       0,
       0,
       GameConfig.gamePanelWidth,
       GameConfig.gamePanelHeight
     );
 
-    const messagesRect = new Phaser.Rectangle(
+    this.ui.messagesRect = new Phaser.Rectangle(
       0,
       0,
       SCREEN_BOUNDS.width,
@@ -212,14 +215,20 @@ export default class extends Phaser.State {
     const messagesPanel = this.game.add.graphics();
     messagesPanel.beginFill(0x333333, 0.5);
     messagesPanel.drawRect(
-      messagesRect.x,
-      messagesRect.y,
-      messagesRect.width,
-      messagesRect.height
+      this.ui.messagesRect.x,
+      this.ui.messagesRect.y,
+      this.ui.messagesRect.width,
+      this.ui.messagesRect.height
     );
     messagesPanel.endFill();
     messagesPanel.alignIn(SCREEN_BOUNDS, Phaser.BOTTOM_CENTER);
 
+    this.ui.logMessages = this.game.add.bitmapText(0, 0, 'monaco', '', 20);
+
+    this.ui.logMessages.alignIn(messagesPanel, Phaser.TOP_LEFT);
+  }
+
+  updateUI() {
     const logComponent: Log = this.componentManager
       .getAll({
         component: Log,
@@ -231,15 +240,7 @@ export default class extends Phaser.State {
       throw new Error('Log component must exist!');
     }
 
-    const log = this.game.add.bitmapText(
-      0,
-      0,
-      'monaco',
-      logComponent.messages.join('\n'),
-      20
-    );
-
-    log.alignIn(messagesPanel, Phaser.TOP_LEFT);
+    this.ui.logMessages.setText(logComponent.messages.join('\n'));
   }
 
   initializeSystems() {
@@ -269,6 +270,8 @@ export default class extends Phaser.State {
   }
 
   render() {
+    this.updateUI();
+
     for (let system of this.systems.render) {
       system.update(this.entities);
     }

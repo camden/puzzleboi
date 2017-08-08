@@ -15,7 +15,7 @@ import {
 } from 'component';
 import MapConfig from 'config/map.json';
 
-import { clamp, getEntitiesAtPosition } from 'utils';
+import { log, clamp, getEntitiesAtPosition } from 'utils';
 
 export interface Command {
   execute(componentManager: ComponentManager): void,
@@ -143,7 +143,10 @@ export class WaitCommand implements Command {
       }
 
       if (turnComponent.myTurn) {
-        console.log('Player is waiting...');
+        log({
+          componentManager: componentManager,
+          message: 'Player is waiting...',
+        });
         turnComponent.myTurn = false;
       }
     });
@@ -257,9 +260,10 @@ export class MoveCommand implements Command {
             });
 
             if (entityOnTileMetadata) {
-              console.log(
-                `You are looking at: ${entityOnTileMetadata.name} - ${entityOnTileMetadata.description}`
-              );
+              log({
+                componentManager: componentManager,
+                message: `You are looking at: ${entityOnTileMetadata.name} - ${entityOnTileMetadata.description}`,
+              });
             }
           }
         }
@@ -292,9 +296,10 @@ export class MoveCommand implements Command {
                   entity: myEntity,
                   component: Metadata,
                 }).name;
-                console.log(
-                  `${currentEntityName} bumped into ${entityOnTileName}.`
-                );
+                log({
+                  componentManager: componentManager,
+                  message: `${currentEntityName} bumped into ${entityOnTileName}.`,
+                });
 
                 const entityOnTileAttackable: ?Attackable = componentManager.get(
                   {
