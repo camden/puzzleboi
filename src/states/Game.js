@@ -203,7 +203,7 @@ export default class extends Phaser.State {
       0,
       0,
       SCREEN_BOUNDS.width,
-      SCREEN_BOUNDS.height - GameConfig.gamePanelHeight
+      SCREEN_BOUNDS.height - GameConfig.gamePanelHeight - MapConfig.tileSize
     );
 
     const messagesPanel = this.game.add.graphics();
