@@ -139,7 +139,10 @@ export default class extends Phaser.State {
         new Player({ state: 'PLAYING' }),
         new PlayerControlled(),
         new Turn({ recharge_time: 10 }),
-        new Transform({ x: 0, y: 0 }),
+        new Transform({
+          x: Math.floor(MapConfig.width / 2),
+          y: Math.floor(MapConfig.height / 2),
+        }),
         new Renderable({ glyph: '@', visible: true }),
         new Metadata({
           name: 'Player (you)',
