@@ -100,15 +100,15 @@ export default class extends Phaser.State {
         new Actor({
           // TODO make these classes, not strings
           tactics: [
-            {
-              name: 'attack_adjacent',
-            },
-            {
-              name: 'move_towards_player',
-              params: {
-                sight: 10,
-              },
-            },
+            // {
+            //   name: 'attack_adjacent',
+            // },
+            // {
+            //   name: 'move_towards_player',
+            //   params: {
+            //     sight: 10,
+            //   },
+            // },
             {
               name: 'wander',
               params: {},
@@ -122,7 +122,7 @@ export default class extends Phaser.State {
           description: 'A spooky boneman',
         }),
         new Renderable({ glyph: 'S', visible: true }),
-        new Transform({ x: 6, y: 4 }),
+        new Transform({ x: 4, y: 4 }),
         new Turn({ recharge_time: 12 }),
       ],
     });
@@ -138,7 +138,7 @@ export default class extends Phaser.State {
         new Player({ state: 'PLAYING' }),
         new PlayerControlled(),
         new Turn({ recharge_time: 10 }),
-        new Transform({ x: 1, y: 4 }),
+        new Transform({ x: 0, y: 0 }),
         new Renderable({ glyph: '@', visible: true }),
         new Metadata({
           name: 'Player (you)',
@@ -208,7 +208,7 @@ export default class extends Phaser.State {
     );
 
     const messagesPanel = this.game.add.graphics();
-    messagesPanel.beginFill(0x333333, 1);
+    messagesPanel.beginFill(0x333333, 0.5);
     messagesPanel.drawRect(
       messagesRect.x,
       messagesRect.y,

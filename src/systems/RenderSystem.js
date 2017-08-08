@@ -19,17 +19,19 @@ export default class RenderSystem implements System {
     this.componentManager = componentManager;
     this.game = game;
 
-    // Init map - should this be somewhere else?
-    const MAP_WIDTH = MapConfig.width;
-    const MAP_HEIGHT = MapConfig.height;
-    const gameSizePct = 0.7;
-    this.cameraBounds = {
-      width: this.game.scale.width / MapConfig.tileSize,
-      height: this.game.scale.height / MapConfig.tileSize * gameSizePct,
-    };
-    const blankChar = '·';
-    // TODO this is ugly... use a camera
+    // Height and width in pixels
+    const GAME_WIDTH = 400;
+    const GAME_HEIGHT = 400;
+
     const spacing = MapConfig.tileSize;
+    const maxMapWidth = Math.floor(GAME_WIDTH / spacing);
+    const maxMapHeight = Math.floor(GAME_HEIGHT / spacing);
+    const MAP_WIDTH = Math.min(MapConfig.width, maxMapWidth);
+    const MAP_HEIGHT = Math.min(MapConfig.height, maxMapHeight);
+
+    const blankChar = '·';
+    const textSize = 30;
+
     this.map = new Array(MAP_WIDTH);
 
     for (let x = 0; x < MAP_WIDTH; x++) {
@@ -40,13 +42,14 @@ export default class RenderSystem implements System {
           y * spacing,
           'monaco',
           blankChar,
-          30
+          textSize
         );
         cell.tint = 0x000000;
         this.map[x][y] = cell;
       }
     }
 
+    // TODO fix flow error
     this.playerEntity = componentManager
       .getAll({
         component: Player,
@@ -63,11 +66,11 @@ export default class RenderSystem implements System {
     };
 
     this.draw = ({ x, y, glyph }) => {
-      if (x < 0 || x >= this.cameraBounds.width - 1 || x >= MAP_WIDTH) {
+      if (x < 0 || x >= this.map.length) {
         return;
       }
 
-      if (y < 0 || y >= this.cameraBounds.height - 1 || y >= MAP_HEIGHT) {
+      if (y < 0 || y >= this.map[x].length) {
         return;
       }
 
@@ -95,14 +98,8 @@ export default class RenderSystem implements System {
 
       // Eventually do a bitmask?
       if (renderable && renderable.visible && transform) {
-        const x =
-          transform.x -
-          playerTransform.x +
-          Math.round(this.cameraBounds.width / 2);
-        const y =
-          transform.y -
-          playerTransform.y +
-          Math.round(this.cameraBounds.height / 2);
+        const x = transform.x - playerTransform.x;
+        const y = transform.y - playerTransform.y;
         // TODO Rename this
         this.draw({
           x: x,
