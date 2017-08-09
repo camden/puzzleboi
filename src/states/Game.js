@@ -110,7 +110,6 @@ export default class extends Phaser.State {
             // },
             {
               name: 'wander',
-              params: {},
             },
           ],
         }),
