@@ -1,6 +1,5 @@
 // @flow
-import Phaser from 'phaser';
-import { centerGameObjects } from 'utils';
+import Phaser from "phaser";
 
 export default class extends Phaser.State {
   init() {}
@@ -9,19 +8,18 @@ export default class extends Phaser.State {
     this.loaderBg = this.add.sprite(
       this.game.world.centerX,
       this.game.world.centerY,
-      'loaderBg'
+      "loaderBg"
     );
     this.loaderBar = this.add.sprite(
       this.game.world.centerX,
       this.game.world.centerY,
-      'loaderBar'
+      "loaderBar"
     );
-    centerGameObjects([this.loaderBg, this.loaderBar]);
 
     this.load.setPreloadSprite(this.loaderBar);
   }
 
   create() {
-    this.state.start('Game');
+    this.state.start("Game");
   }
 }
