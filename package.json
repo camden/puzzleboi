@@ -1,0 +1,51 @@
+{
+  "name": "PhaserES6Webpack",
+  "version": "1.0.0",
+  "description": "",
+  "author": "leandro cabrera <leandcabrera@gmail.com>",
+  "main": "index.js",
+  "scripts": {
+    "dev": "webpack",
+    "deploy": "webpack --config webpack.production.config.js",
+    "test": "eslint ./src/**/**.js",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.js, !*.min.js": [
+      "prettier --single-quote --write --trailing-comma es5",
+      "git add"
+    ]
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-core": "^6.24.1",
+    "babel-eslint": "^7.2.3",
+    "babel-loader": "^7.0.0",
+    "babel-polyfill": "^6.23.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-flow": "^6.23.0",
+    "browser-sync": "^2.18.12",
+    "browser-sync-webpack-plugin": "^1.1.4",
+    "eslint": "^3.19.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-import-resolver-webpack": "^0.8.3",
+    "eslint-plugin-flowtype": "^2.35.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-node": "^4.2.2",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "expose-loader": "^0.7.3",
+    "flow-bin": "^0.51.0",
+    "husky": "^0.14.3",
+    "lint-staged": "^4.0.2",
+    "prettier": "^1.5.3",
+    "webpack": "^2.6.1"
+  },
+  "dependencies": {
+    "javascript-astar": "^0.4.1",
+    "phaser-ce": "^2.8.0",
+    "seedrandom": "^2.4.3",
+    "webfontloader": "^1.6.28"
+  }
+}
